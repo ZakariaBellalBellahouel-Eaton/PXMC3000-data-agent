@@ -1,0 +1,4 @@
+install
+cpprestsdk
+cppcodec
+sqlite3
