@@ -11,18 +11,17 @@
 #ifndef SMP_DATA_SETTINGS_H
 #define SMP_DATA_SETTINGS_H
 
-#include <string>
-#include <ctime>
+#include<string>
 
 namespace smp::data::entities {
 	struct settings {
-		utility::string_t name;
-		utility::string_t description;
-		utility::string_t company;
-		utility::string_t Region;
-		utility::string_t substation;
-		utility::string_t fileName;
-		utility::string_t fileDate;
+		std::string name;
+		std::string description;
+		std::string company;
+		std::string Region;
+		std::string substation;
+		std::string fileName;
+		std::string fileDate;
 		int fileCRC;
 	};
 }

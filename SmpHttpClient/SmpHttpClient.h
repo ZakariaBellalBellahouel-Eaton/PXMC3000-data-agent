@@ -3,16 +3,35 @@
 
 #pragma once
 
-#include <cpprest/http_client.h>
-#include <cpprest/http_client.h>
-#include <cpprest/uri.h>
-#include <cpprest/json.h>
-#include <cppcodec/base64_rfc4648.hpp>
+// Curl Library to perform/handle Http/Https request 
+#include <curl/curl.h>
+
+// Json Library
 #include <nlohmann/json.hpp>
+
+// Library for decoding
+#include <cppcodec/base64_rfc4648.hpp>
+
+// Library for Json that may be used to compare performance
+//#include <nlohmann/json.hpp>
+
+// Data structure to support the SMP Rest API messages
 #include "data/entities/smpDevice.h"
 #include "data/dataAccess/sqlite3DataAccess.h"
+
+// Standards libraries
 #include <iostream>
 #include <fstream>
+#include <list>
+
+//Libraries for Linux Daemon
+#include <unistd.h> // for fork
+#include <stdlib.h> // for exit
+#include <sys/stat.h> //for umark
+#include <sys/types.h>
+#include <syslog.h> // require installation of log4cpp
+#include <signal.h>
+
 
 // Program contants
 

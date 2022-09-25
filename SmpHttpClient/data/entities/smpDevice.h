@@ -17,40 +17,41 @@
 
 namespace smp::data::entities {
 	struct smpDevice {
-		utility::string_t id;
-		hardware hardware;
-		firmware firmware;
-		settings settings;
+		std::string id;
+		hardware smpHardware;
+		firmware smpFirmware;
+		settings smpSettings;
 		// Constructor to allow the initialization of the structure when passing it as param
-		smpDevice(utility::string_t id,
-			utility::string_t hardwareModel,
-			utility::string_t hardwareSerialNumber,
-			utility::string_t firmwareBootstrapVersion,
-			utility::string_t firmwareOsVersion,
-			utility::string_t firmwareApplicationVersion,
-			utility::string_t settingsName,
-			utility::string_t settingsDescription,
-			utility::string_t idsettingsCompany,
-			utility::string_t settingsRegion,
-			utility::string_t settingsSubstation,
-			utility::string_t settingsFileName,
-			utility::string_t settingsFileDate,
+		smpDevice(
+			std::string id,
+			std::string hardwareModel,
+			std::string hardwareSerialNumber,
+			std::string firmwareBootstrapVersion,
+			std::string firmwareOsVersion,
+			std::string firmwareApplicationVersion,
+			std::string settingsName,
+			std::string settingsDescription,
+			std::string idsettingsCompany,
+			std::string settingsRegion,
+			std::string settingsSubstation,
+			std::string settingsFileName,
+			std::string settingsFileDate,
 			int settingsFileCRC
 		) {
-			id = id;
-			hardware.model = hardwareModel;
-			hardware.serialNumber = hardwareSerialNumber;
-			firmware.bootstrapVersion = firmwareBootstrapVersion;
-			firmware.osVersion = firmwareOsVersion;
-			firmware.applicationVersion = firmwareApplicationVersion;
-			settings.name = settingsName;
-			settings.description = settingsDescription;
-			settings.company = idsettingsCompany;
-			settings.Region = settingsRegion;
-			settings.substation = settingsSubstation;
-			settings.fileName = settingsFileName;
-			settings.fileDate = settingsFileDate;
-			settings.fileCRC = settingsFileCRC;
+			this->id = id;
+			smpHardware.model = hardwareModel;
+			smpHardware.serialNumber = hardwareSerialNumber;
+			smpFirmware.bootstrapVersion = firmwareBootstrapVersion;
+			smpFirmware.osVersion = firmwareOsVersion;
+			smpFirmware.applicationVersion = firmwareApplicationVersion;
+			smpSettings.name = settingsName;
+			smpSettings.description = settingsDescription;
+			smpSettings.company = idsettingsCompany;
+			smpSettings.Region = settingsRegion;
+			smpSettings.substation = settingsSubstation;
+			smpSettings.fileName = settingsFileName;
+			smpSettings.fileDate = settingsFileDate;
+			smpSettings.fileCRC = settingsFileCRC;
 		}
 	};
 }

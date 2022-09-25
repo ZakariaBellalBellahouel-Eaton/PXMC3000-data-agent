@@ -2,3 +2,5 @@ install
 cpprestsdk
 cppcodec
 sqlite3
+nlohmann-json
+log4cpp

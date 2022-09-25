@@ -11,12 +11,12 @@
 #ifndef SMP_DATA_HARDWARE_H
 #define SMP_DATA_HARDWARE_H
 
-#include <string>
+#include<string>
 
 namespace smp::data::entities {
 	struct hardware {
-		utility::string_t model;
-		utility::string_t serialNumber;
+		std::string model;
+		std::string serialNumber;
 	};
 }
 

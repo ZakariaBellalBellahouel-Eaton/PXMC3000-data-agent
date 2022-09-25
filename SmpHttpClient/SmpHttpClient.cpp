@@ -3,108 +3,159 @@
 #include "SmpHttpClient.h"
 
 using namespace std;
-using namespace web;
-using namespace web::http;
-using namespace web::http::client;
 using namespace smp::data::dataAccess;
 using namespace smp::data::entities;
 
-// Namepaces aliases 
-namespace jsonLibrary = web::json;
-namespace httpLibrary = web::http;
+using json = nlohmann::json;
 
+
+#define LOGGING "Start logging task = %d\n"
+
+// Methode that loads the progam data
 bool loadConfiguration();
 
+// The call Methode for the Curl library
+static size_t getApiData(void* contents, size_t size, size_t nmemb, void* userp);
 
 int main()
 {
 	// TODO : All this constate will be replaced by params
-	string stringJsonSMPIdsID = "IDs";
-	string stringJsonSMPInformationID = "Informations";
-	const wstring jsonSMPIdsID(wstring(stringJsonSMPIdsID.begin(), stringJsonSMPIdsID.end()));
-	const wstring jsonSMPInformationID(wstring(stringJsonSMPInformationID.begin(), stringJsonSMPInformationID.end()));
+	const string jsonSMPIdsID = "IDs";
+	const string jsonSMPInformationID = "Informations";
+	// Certificate path
+	const string SSLCertificate = "/Eaton/certificates/Eaton_root_ca_2.pem";
+	// Refresh Time
+	const int refreshTime = 2;
 	// SMP IP adress
-	string stringSmpBasicUri = "https://10.106.88.181/";
-	const uri smpBasicUri(wstring(stringSmpBasicUri.begin(), stringSmpBasicUri.end()));
+	const string stringSmpBasicUri = "https://10.106.88.181/";
 	// TO by encrypted in param file
 	const string username = "security";
 	const string password = "Security8*";
 	// Authorization header key
-	const wstring stringAutorizationHeaderKey = L"Authorization";
-	const http_headers::key_type autorizationHeaderKey = stringAutorizationHeaderKey.c_str();
+	const string autorizationHeader = "Authorization: Basic " + cppcodec::base64_rfc4648::encode(username + ":" + password);
 	//SMP entity
 	//smpDevice smpDeviceObject;
 	// SMP Configuration Database path
-	const char* configurationDatabaseFullPath = "C:\\Users\\e0718027\\source\\repos\\SmpHttpClient\\SmpHttpClient\\Database\\SMPConfiguration.db";
+	const char* configurationDatabaseFullPath = "/usr/share/Eaton/database/SMPConfiguration.db";
 	//const char* getSMPDeviceIDUri = "api/dashboard/v1/name-plate-informations/";
-	const utility::string_t getSMPDeviceIDUri = U("api/dashboard/v1/name-plate-informations/");
-	// String array that will contains the smp Ids 
-	utility::string_t* smpDeviceIds = nullptr;
-	// Variable to store the dynamic size of the smpDeviceIds array
-	int smpDeviceIdsSize = 0;
-	// Variable that will handle the APi responses
-	pplx::task<httpLibrary::http_response> response;
-	// HTTP Client configuration
-	http_client_config config;
+	const string getSMPDeviceIDUri = "api/dashboard/v1/name-plate-informations/";
 	// Http request Header Autorization value
 	string authorizationHeaderValue;
-	config.set_validate_certificates(false);
 	// Sqlite3DataAccess to manipulate all the data with database layer 
 	dataAccess::sqlite3DataAccess smpSqlite3DataAccess(configurationDatabaseFullPath);
+	// List of SMP devices returned by the API
+	list<smpDevice> smpDeviceList = {};
 
-	// HTTP Client
-	http_client client(smpBasicUri, config);
-	//Http get request 
-	http_request getRequest(httpLibrary::methods::GET);
+	// Curl HTTP(s) Client declaration & initialization
+	CURL* curlHandle = curl_easy_init();
+	struct curl_slist* headers = NULL;
+	CURLcode curlCodeResult;
 
+	// Variables that will handle the APi reponse ID & Details
+	string smpDeviceID;
+	json jsonArraySMPIds;
+	// Variable that will handle the APi responses
+	string  responseJsonListIds;
+	string reponseJsonSmpDeviceInformation;
 	// Setup the get request Authorization
-	getRequest.headers().add(autorizationHeaderKey.c_str(), ("Basic " + cppcodec::base64_rfc4648::encode(username + ":" + password)).c_str());
-	//  Step 1 : get the SMP device Ids dynamically & get the json
-	try
-	{
-		int arrayIterator = 0;
-		getRequest.set_request_uri(getSMPDeviceIDUri);
-		response = client.request(getRequest);
-		if (response.get().status_code() != 200)
-		{
-			// TO DO : raise an exception
-			throw;
-		}
-		// Extract the SMP Ids list from the returned JSON
-		jsonLibrary::object idsJsonResult = response.get().extract_json().get().as_object();
-		jsonLibrary::array idsJsonValue = idsJsonResult.at(jsonSMPIdsID).as_array();
-		list<smpDevice> smpDeviceList = {};
-		// Loop throw each identifier and get its data
-		for (jsonLibrary::value& jsonValueIterator : idsJsonValue)
-		{
-			getRequest.set_request_uri(getSMPDeviceIDUri + jsonValueIterator.as_string());
-			response = client.request(getRequest);
-			if (response.get().status_code() != 200)
-			{
-				// TO DO : raise an exception
-				throw;
-			}
-			jsonLibrary::object smpInformationJsonResult = response.get().extract_json().get().as_object().at(jsonSMPInformationID).as_object();
-			smpDeviceList.emplace_back(smpDevice{
-				smpInformationJsonResult.at(L"ID").as_string(),
-				smpInformationJsonResult.at(L"Hardware").as_object().at(L"Model").as_string(),
-				smpInformationJsonResult.at(L"Hardware").as_object().at(L"SerialNumber").as_string(),
-				smpInformationJsonResult.at(L"Firmware").as_object().at(L"BootstrapVersion").as_string(),
-				smpInformationJsonResult.at(L"Firmware").as_object().at(L"OsVersion").as_string(),
-				smpInformationJsonResult.at(L"Firmware").as_object().at(L"ApplicationVersion").as_string(),
-				smpInformationJsonResult.at(L"Settings").as_object().at(L"Name").as_string(),
-				smpInformationJsonResult.at(L"Settings").as_object().at(L"Description").as_string(),
-				smpInformationJsonResult.at(L"Settings").as_object().at(L"Company").as_string(),
-				smpInformationJsonResult.at(L"Settings").as_object().at(L"Region").as_string(),
-				smpInformationJsonResult.at(L"Settings").as_object().at(L"Substation").as_string(),
-				smpInformationJsonResult.at(L"Settings").as_object().at(L"Filename").as_string(),
-				smpInformationJsonResult.at(L"Settings").as_object().at(L"FileDate").as_string(),
-				smpInformationJsonResult.at(L"Settings").as_object().at(L"FileCRC").as_integer()
-				});
+	headers = curl_slist_append(headers, autorizationHeader.c_str());
+	curl_easy_setopt(curlHandle, CURLOPT_HTTPHEADER, headers);
 
+	// Ignore the SSL certification validation when it's not valid
+	curl_easy_setopt(curlHandle, CURLOPT_SSL_VERIFYPEER, 0L);
+	// The following line can be used to validate the certeficate
+	//curl_easy_setopt(curl, CURLOPT_CAINFO, "/Eaton/certificates/10.106.88.181.pem");
+
+	// Prepare the 
+	curl_easy_setopt(curlHandle, CURLOPT_WRITEFUNCTION, getApiData);
+
+
+
+	while (true)
+	{
+		try
+		{
+			//sleep(refreshTime);
+			//syslog(LOG_INFO, LOGGING, "Inside the SMP Loop");
+
+			//  Step 1 : get the SMP device Ids dynamically from json
+			if (curlHandle) {
+				// Set the URL
+				curl_easy_setopt(curlHandle, CURLOPT_URL, string(stringSmpBasicUri + getSMPDeviceIDUri).c_str());
+				curl_easy_setopt(curlHandle, CURLOPT_WRITEDATA, &responseJsonListIds);
+
+
+				/* Perform the request, res will get the return code */
+				curlCodeResult = curl_easy_perform(curlHandle);
+
+				if (curlCodeResult != CURLE_OK)
+				{
+					// TODO : To be logged with logging mechanism
+					syslog(LOG_ERR, "Error calling the SMP Api to get the Device ID list.");
+					throw;
+				}
+
+				jsonArraySMPIds = json::parse(responseJsonListIds).at(jsonSMPIdsID);
+
+				// Extract the SMP Ids list from the returned JSON
+				// Loop throw each identifier and get its data
+				for (auto jsonArraySMPId = jsonArraySMPIds.begin(); jsonArraySMPId != jsonArraySMPIds.end(); jsonArraySMPId++)
+				{
+					syslog(LOG_INFO, jsonArraySMPId.value().dump().c_str());
+					// Prepare the ID and remove the double quotes
+					smpDeviceID = jsonArraySMPId.value().dump();
+					smpDeviceID.erase(0, 1);
+					smpDeviceID.erase(smpDeviceID.length() - 1);
+
+					// Build the URI dynamically to get the Device information details based on the ID obtained dynamically
+					curl_easy_setopt(curlHandle, CURLOPT_URL, string(stringSmpBasicUri + getSMPDeviceIDUri + smpDeviceID).c_str());
+					curl_easy_setopt(curlHandle, CURLOPT_WRITEDATA, &reponseJsonSmpDeviceInformation);
+
+					curlCodeResult = curl_easy_perform(curlHandle);
+
+					if (curlCodeResult != CURLE_OK)
+					{
+						// TODO : To be logged with logging mechanism
+						syslog(LOG_ERR, "Error calling the SMP Api to get the Device information details.");
+						throw;
+					}
+					json smpDeviceInformationDetails = json::parse(reponseJsonSmpDeviceInformation).at(jsonSMPInformationID);
+
+					smpDeviceList.emplace_back(smpDevice{
+						smpDeviceInformationDetails.at("ID").dump(),
+						smpDeviceInformationDetails.at("Hardware").at("Model").dump(),
+						smpDeviceInformationDetails.at("Hardware").at("SerialNumber").dump(),
+						smpDeviceInformationDetails.at("Firmware").at("BootstrapVersion").dump(),
+						smpDeviceInformationDetails.at("Firmware").at("OsVersion").dump(),
+						smpDeviceInformationDetails.at("Firmware").at("ApplicationVersion").dump(),
+						smpDeviceInformationDetails.at("Settings").at("Name").dump(),
+						smpDeviceInformationDetails.at("Settings").at("Description").dump(),
+						smpDeviceInformationDetails.at("Settings").at("Company").dump(),
+						smpDeviceInformationDetails.at("Settings").at("Region").dump(),
+						smpDeviceInformationDetails.at("Settings").at("Substation").dump(),
+						smpDeviceInformationDetails.at("Settings").at("Filename").dump(),
+						smpDeviceInformationDetails.at("Settings").at("FileDate").dump(),
+						smpDeviceInformationDetails.at("Settings").at("FileCRC")
+						});
+				}
+
+				// Store the data in the DataBase ( Sqlite at the moment of writing this comment )
+				try
+				{
+					// Initialize the Database
+					smpSqlite3DataAccess.initializeSmpDeviceBatabase();
+					// Save the data
+					smpSqlite3DataAccess.upsertSmpDevice(smpDeviceList.back());
+				}
+				catch (const exception ex)
+				{
+					cerr << "Error saving smpDevice data: " << ex.what() << endl;
+				}
+			}
+
+			// Store the data in the DataBase ( Sqlite at the moment of writing this comment )
 			try
 			{
-				// Store the data in the DataBase ( Sqlite at the moment of writing this comment )
 				// Initialize the Database
 				smpSqlite3DataAccess.initializeSmpDeviceBatabase();
 				// Save the data
@@ -115,17 +166,24 @@ int main()
 				cerr << "Error saving smpDevice data: " << ex.what() << endl;
 			}
 		}
+		catch (json::exception ex)
+		{
+			syslog(LOG_ERR, "Error calling the SMP API : ");
+			syslog(LOG_ERR, ex.what());
+		}
 
+		// Clean the variables;
+		responseJsonListIds.clear();
+		smpDeviceList.clear();
+		smpDeviceID.clear();
+		jsonArraySMPIds.clear();
+		responseJsonListIds.clear();
+		reponseJsonSmpDeviceInformation.clear();
 	}
-	catch (const std::exception ex)
-	{
-		wcout << ex.what();
-	}
 
-	//Free memory
-	delete smpDeviceIds;
-
-	return 0;
+	curl_slist_free_all(headers);
+	cout << "Dreams come true" << endl;
+	return 1;
 }
 
 // Implementation section
@@ -138,4 +196,10 @@ bool loadConfiguration() {
 		return false;
 	}
 	return true;
+}
+
+static size_t getApiData(void* contents, size_t size, size_t nmemb, void* userp)
+{
+	((std::string*)userp)->append((char*)contents, size * nmemb);
+	return size * nmemb;
 }

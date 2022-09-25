@@ -1,6 +1,7 @@
 // Class that encapsulate all the data access layer for Sqlite3
 
 #include <sqlite3.h>
+#include<iostream>
 #include "../entities/smpDevice.h"
 
 #ifndef SQLLITEDATAACESS_H

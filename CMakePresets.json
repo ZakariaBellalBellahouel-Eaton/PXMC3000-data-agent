@@ -1,4 +1,4 @@
-﻿{
+{
   "version": 3,
   "configurePresets": [
     {
@@ -62,8 +62,8 @@
       "name": "linux-debug",
       "displayName": "Linux Debug",
       "generator": "Ninja",
-      "binaryDir": "${sourceDir}/out/build/${presetName}",
-      "installDir": "${sourceDir}/out/install/${presetName}",
+      "binaryDir": "/Eaton/code/SmpHttpClient/${presetName}",
+      "installDir": "/Eaton/code/SmpHttpClient/install/${presetName}",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug"
       },
@@ -77,7 +77,7 @@
           "sourceDir": "$env{HOME}/.vs/$ms{projectDirName}"
         }
       },
-      "toolchainFile": "C:/Eaton/Software development/C++ libraries/vcpkg/scripts/buildsystems/vcpkg.cmake"
+      "toolchainFile": "/Eaton/code/vcpkg/scripts/buildsystems/vcpkg.cmake"
     },
     {
       "name": "macos-debug",

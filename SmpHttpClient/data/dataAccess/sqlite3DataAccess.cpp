@@ -1,5 +1,5 @@
 #include "sqlite3DataAccess.h"
-
+#include <syslog.h>
 using namespace std;
 
 namespace smp::data::dataAccess
@@ -42,24 +42,32 @@ namespace smp::data::dataAccess
 		{
 			int exit = 0;
 			exit = sqlite3_open(configurationDatabaseFullPath, &database);
-
-			char* messageError;
-			exit = sqlite3_exec(database, sqlCreateSmpdeviceQuery.c_str(), NULL, 0, &messageError);
-			if (exit != SQLITE_OK)
+			if (exit == SQLITE_OK)
 			{
-				cerr << "Error Create Table SMPDevice" << endl;
-				cerr << messageError << endl;
-				sqlite3_free(messageError);
+				char* messageError;
+				exit = sqlite3_exec(database, sqlCreateSmpdeviceQuery.c_str(), NULL, 0, &messageError);
+				if (exit != SQLITE_OK)
+				{
+					cerr << "Error Create Table SMPDevice" << endl;
+					cerr << messageError << endl;
+					sqlite3_free(messageError);
+				}
+				else
+				{
+					cout << "Table SmpDevice created Successfully" << endl;
+				}
+				sqlite3_close_v2(database);
 			}
 			else
 			{
-				cout << "Table SmpDevice created Successfully" << endl;
+				cerr << "Failed to open/create database file" << endl;
 			}
-			sqlite3_close_v2(database);
+
 		}
-		catch (const exception&)
+		catch (exception ex)
 		{
 			sqlite3_close(database);
+			cerr << ex.what();
 			throw;
 		}
 
@@ -72,33 +80,33 @@ namespace smp::data::dataAccess
 			"INSERT INTO SmpDevice([ID],[Hardware.Model],[Hardware.SerialNumber],[Firmware.BootstrapVersion],"
 			"[Firmware.OsVersion],[Firmware.ApplicationVersion],[Settings.Name],[Settings.Description],[Settings.Company],"
 			"[Settings.Region],[Settings.Substation],[Settings.Filename],[Settings.FileDate],[Settings.FileCRC])"
-			"VALUES(\"" + string(smpDeviceInformation.id.begin(), smpDeviceInformation.id.end()) +
-			"\",\"" + string(smpDeviceInformation.hardware.model.begin(), smpDeviceInformation.hardware.model.end()) +
-			"\",\"" + string(smpDeviceInformation.hardware.serialNumber.begin(), smpDeviceInformation.hardware.serialNumber.end()) +
-			"\",\"" + string(smpDeviceInformation.firmware.bootstrapVersion.begin(), smpDeviceInformation.firmware.bootstrapVersion.end()) +
-			"\",\"" + string(smpDeviceInformation.firmware.osVersion.begin(), smpDeviceInformation.firmware.osVersion.end()) +
-			"\",\"" + string(smpDeviceInformation.firmware.applicationVersion.begin(), smpDeviceInformation.firmware.applicationVersion.end()) +
-			"\",\"" + string(smpDeviceInformation.settings.name.begin(), smpDeviceInformation.settings.name.end()) +
-			"\",\"" + string(smpDeviceInformation.settings.description.begin(), smpDeviceInformation.settings.description.end()) +
-			"\",\"" + string(smpDeviceInformation.settings.company.begin(), smpDeviceInformation.settings.company.end()) +
-			"\",\"" + string(smpDeviceInformation.settings.Region.begin(), smpDeviceInformation.settings.Region.end()) +
-			"\",\"" + string(smpDeviceInformation.settings.substation.begin(), smpDeviceInformation.settings.substation.end()) +
-			"\",\"" + string(smpDeviceInformation.settings.fileName.begin(), smpDeviceInformation.settings.fileName.end()) +
-			"\",\"" + string(smpDeviceInformation.settings.fileDate.begin(), smpDeviceInformation.settings.fileDate.end()) +
-			"\"," + to_string(smpDeviceInformation.settings.fileCRC) +
-			") ON CONFLICT([ID]) DO UPDATE SET"
-			"[Hardware.Model]				= excluded.[Hardware.Model],"
-			"[Hardware.SerialNumber]		= excluded.[Hardware.SerialNumber],"
-			"[Firmware.BootstrapVersion]	= excluded.[Firmware.BootstrapVersion],"
-			"[Firmware.OsVersion]			= excluded.[Firmware.OsVersion],"
-			"[Firmware.ApplicationVersion]	= excluded.[Hardware.Model],"
-			"[Settings.Name]				= excluded.[Settings.Name],"
-			"[Settings.Description]			= excluded.[Settings.Description],"
-			"[Settings.Company]				= excluded.[Settings.Company],"
-			"[Settings.Region]				= excluded.[Settings.Region],"
-			"[Settings.Substation]			= excluded.[Settings.Substation],"
-			"[Settings.Filename]			= excluded.[Settings.Filename],"
-			"[Settings.FileDate]			= excluded.[Settings.FileDate],"
+			"VALUES(" + smpDeviceInformation.id +
+			"," + smpDeviceInformation.smpHardware.model +
+			"," + smpDeviceInformation.smpHardware.serialNumber +
+			"," + smpDeviceInformation.smpFirmware.bootstrapVersion +
+			"," + smpDeviceInformation.smpFirmware.osVersion +
+			"," + smpDeviceInformation.smpFirmware.applicationVersion +
+			"," + smpDeviceInformation.smpSettings.name +
+			"," + smpDeviceInformation.smpSettings.description +
+			"," + smpDeviceInformation.smpSettings.company +
+			"," + smpDeviceInformation.smpSettings.Region +
+			"," + smpDeviceInformation.smpSettings.substation +
+			"," + smpDeviceInformation.smpSettings.fileName +
+			"," + smpDeviceInformation.smpSettings.fileDate +
+			"," + to_string(smpDeviceInformation.smpSettings.fileCRC) +
+			") ON CONFLICT([ID]) DO UPDATE SET" +
+			"[Hardware.Model]				= excluded.[Hardware.Model]," +
+			"[Hardware.SerialNumber]		= excluded.[Hardware.SerialNumber]," +
+			"[Firmware.BootstrapVersion]	= excluded.[Firmware.BootstrapVersion]," +
+			"[Firmware.OsVersion]			= excluded.[Firmware.OsVersion]," +
+			"[Firmware.ApplicationVersion]	= excluded.[Hardware.Model]," +
+			"[Settings.Name]				= excluded.[Settings.Name]," +
+			"[Settings.Description]			= excluded.[Settings.Description]," +
+			"[Settings.Company]				= excluded.[Settings.Company]," +
+			"[Settings.Region]				= excluded.[Settings.Region]," +
+			"[Settings.Substation]			= excluded.[Settings.Substation]," +
+			"[Settings.Filename]			= excluded.[Settings.Filename]," +
+			"[Settings.FileDate]			= excluded.[Settings.FileDate]," +
 			"[Settings.FileCRC]				= excluded.[Settings.FileCRC];";
 
 		try

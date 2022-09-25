@@ -11,15 +11,15 @@
 #ifndef SMP_DATA_FIRMWARE_H
 #define SMP_DATA_FIRMWARE_H
 
-#include <string>
-#include <cpprest/details/basic_types.h>
+#include<string>
+
 
 namespace smp::data::entities {
-			struct firmware {
-				utility::string_t bootstrapVersion;
-				utility::string_t osVersion;
-				utility::string_t applicationVersion;
-			};
+	struct firmware {
+		std::string bootstrapVersion;
+		std::string osVersion;
+		std::string applicationVersion;
+	};
 }
 
 #endif
