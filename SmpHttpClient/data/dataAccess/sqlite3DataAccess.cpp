@@ -1,5 +1,4 @@
 #include "sqlite3DataAccess.h"
-#include <syslog.h>
 using namespace std;
 
 namespace smp::data::dataAccess
@@ -48,6 +47,7 @@ namespace smp::data::dataAccess
 				exit = sqlite3_exec(database, sqlCreateSmpdeviceQuery.c_str(), NULL, 0, &messageError);
 				if (exit != SQLITE_OK)
 				{
+					// Todo : write to log file
 					cerr << "Error Create Table SMPDevice" << endl;
 					cerr << messageError << endl;
 					sqlite3_free(messageError);
@@ -60,6 +60,7 @@ namespace smp::data::dataAccess
 			}
 			else
 			{
+				// Todo : write to log file
 				cerr << "Failed to open/create database file" << endl;
 			}
 
@@ -117,10 +118,11 @@ namespace smp::data::dataAccess
 			char* messageError;
 			exit = sqlite3_exec(database, sqlQueryUpsertSmpDeviceInformation.c_str(), NULL, 0, &messageError);
 			sqlite3_close(database);
-
+			// Todo : write to log file
 		}
 		catch (const std::exception&)
 		{
+			// Todo : write to log file
 			sqlite3_close(database);
 			throw;
 		}

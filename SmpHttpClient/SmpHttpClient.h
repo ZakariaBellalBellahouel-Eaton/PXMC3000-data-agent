@@ -32,6 +32,12 @@
 #include <syslog.h> // require installation of log4cpp
 #include <signal.h>
 
+// Library for Chrono
+#include <chrono>
+
+// Library to control the thread
+#include <thread>
+
 
 // Program contants
 

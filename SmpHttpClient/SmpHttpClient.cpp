@@ -14,11 +14,16 @@ using json = nlohmann::json;
 // Methode that loads the progam data
 bool loadConfiguration();
 
-// The call Methode for the Curl library
+// The callback Methode for the Curl library
 static size_t getApiData(void* contents, size_t size, size_t nmemb, void* userp);
 
 int main()
 {
+	// Todo : replace it in logging file
+	syslog(LOG_INFO, "SmpHttpClient service started ...");
+
+	//syslog(LOG_INFO, LOGGING, "Inside the SMP Loop");
+
 	// TODO : All this constate will be replaced by params
 	const string jsonSMPIdsID = "IDs";
 	const string jsonSMPInformationID = "Informations";
@@ -39,6 +44,8 @@ int main()
 	const char* configurationDatabaseFullPath = "/usr/share/Eaton/database/SMPConfiguration.db";
 	//const char* getSMPDeviceIDUri = "api/dashboard/v1/name-plate-informations/";
 	const string getSMPDeviceIDUri = "api/dashboard/v1/name-plate-informations/";
+	const int loopwaitingTimeMilliseconds = 60000;
+
 	// Http request Header Autorization value
 	string authorizationHeaderValue;
 	// Sqlite3DataAccess to manipulate all the data with database layer 
@@ -69,12 +76,14 @@ int main()
 	// Prepare the 
 	curl_easy_setopt(curlHandle, CURLOPT_WRITEFUNCTION, getApiData);
 
-
-
+	// Variables to support the Time mesurement & loop time
+	chrono::_V2::steady_clock::time_point getSmpDeviceInformationStart;
+	chrono::milliseconds getSmpDeviceInformationDuration;
 	while (true)
 	{
 		try
 		{
+			getSmpDeviceInformationStart = std::chrono::steady_clock::now();
 			//sleep(refreshTime);
 			//syslog(LOG_INFO, LOGGING, "Inside the SMP Loop");
 
@@ -101,7 +110,6 @@ int main()
 				// Loop throw each identifier and get its data
 				for (auto jsonArraySMPId = jsonArraySMPIds.begin(); jsonArraySMPId != jsonArraySMPIds.end(); jsonArraySMPId++)
 				{
-					syslog(LOG_INFO, jsonArraySMPId.value().dump().c_str());
 					// Prepare the ID and remove the double quotes
 					smpDeviceID = jsonArraySMPId.value().dump();
 					smpDeviceID.erase(0, 1);
@@ -149,6 +157,7 @@ int main()
 				}
 				catch (const exception ex)
 				{
+					// Todo : write to log file
 					cerr << "Error saving smpDevice data: " << ex.what() << endl;
 				}
 			}
@@ -163,13 +172,22 @@ int main()
 			}
 			catch (const exception ex)
 			{
+				// Todo : write to log file
 				cerr << "Error saving smpDevice data: " << ex.what() << endl;
 			}
 		}
 		catch (json::exception ex)
 		{
-			syslog(LOG_ERR, "Error calling the SMP API : ");
+			// Todo : write to log file
+			syslog(LOG_ERR, "SmpHttpClient : Error calling the SMP API : ");
 			syslog(LOG_ERR, ex.what());
+		}
+
+		getSmpDeviceInformationDuration = chrono::duration_cast<chrono::milliseconds>(chrono::steady_clock::now() - getSmpDeviceInformationStart);
+		syslog(LOG_INFO,string("Smp device information refresh completed, duration : ").append(to_string(getSmpDeviceInformationDuration.count()).c_str()).append(" milliseconds").c_str());
+		if (getSmpDeviceInformationDuration.count() < loopwaitingTimeMilliseconds)
+		{
+			this_thread::sleep_for(chrono::milliseconds(loopwaitingTimeMilliseconds - getSmpDeviceInformationDuration.count()));
 		}
 
 		// Clean the variables;
@@ -182,12 +200,12 @@ int main()
 	}
 
 	curl_slist_free_all(headers);
-	cout << "Dreams come true" << endl;
+
 	return 1;
 }
 
 // Implementation section
-
+// Todo conplete the dynamic program configuration data load
 bool loadConfiguration() {
 	ifstream configurationFile(CONFIG_FILE_PATH);
 	if (!configurationFile.is_open())
@@ -197,6 +215,7 @@ bool loadConfiguration() {
 	}
 	return true;
 }
+
 
 static size_t getApiData(void* contents, size_t size, size_t nmemb, void* userp)
 {
