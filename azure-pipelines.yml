@@ -20,12 +20,7 @@ steps:
     ./bootstrap-vcpkg.sh
     ./vcpkg integrate install
     ./vcpkg @../SmpHttpClient/vcpkg_ref.txt
-    cd ..
-    ls
-    cd ..
-    ls
-    cd ..
-    ls
+    pwd
   displayName: 'Prepare VCPKG packages'
 - script: |
     echo Add other tasks to build, test, and deploy your project.
