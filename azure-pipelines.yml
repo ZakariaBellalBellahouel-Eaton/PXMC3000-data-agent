@@ -31,7 +31,7 @@ steps:
 - task: CMake@1
   displayName: 'CMake .'
   inputs:
-    cmakeArgs: '--list-presets=all ../SmpHttpClient'
+    cmakeArgs: '--list-presets=all ../'
 - task: CMake@1
   displayName: 'CMake .'
   inputs:
