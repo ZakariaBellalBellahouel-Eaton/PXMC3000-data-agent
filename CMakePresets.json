@@ -62,8 +62,8 @@
       "name": "linux-debug",
       "displayName": "Linux Debug",
       "generator": "Ninja",
-      "binaryDir": "/usr/Eaton/SmpHttpClient/bin/${presetName}",
-      "installDir": "/usr/Eaton/SmpHttpClient/install/${presetName}",
+      "binaryDir": "/home/eaton/SmpHttpClient/bin/${presetName}",
+      "installDir": "/home/eaton/SmpHttpClient/install/${presetName}",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug"
       },
