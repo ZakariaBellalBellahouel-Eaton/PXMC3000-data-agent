@@ -24,7 +24,7 @@ int main()
 
 	//syslog(LOG_INFO, LOGGING, "Inside the SMP Loop");
 
-	// TODO : All this constate will be replaced by params
+	// TODO : All this const will be replaced by params
 	const string jsonSMPIdsID = "IDs";
 	const string jsonSMPInformationID = "Informations";
 	// Certificate path
