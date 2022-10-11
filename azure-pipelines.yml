@@ -24,6 +24,6 @@ steps:
   inputs:
     cmakeArgs: '..'
 - task: CMake@1
-  displayName: 'CMake --build --config debug'
+  displayName: 'CMake --build . --config debug'
   inputs:
-    cmakeArgs: '--build --config Debug'
+    cmakeArgs: '--build . --config Debug'
