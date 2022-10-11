@@ -34,7 +34,7 @@ steps:
 - task: CMake@1
   displayName: 'CMake .'
   inputs:
-    cmakeArgs: 'cmake --list-presets=all .'
+    cmakeArgs: '--list-presets=all .'
 - task: CMake@1
   displayName: 'CMake --build  --config Debug --preset linux-debug' #-DCMAKE_TOOLCHAIN_FILE=vcpkg/scripts/buildsystems/vcpkg.cmake'
   inputs:
