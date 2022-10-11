@@ -1,5 +1,4 @@
 install
-cpprestsdk
 cppcodec
 sqlite3
 nlohmann-json
