@@ -21,9 +21,6 @@ steps:
     ./vcpkg integrate install
     ./vcpkg @../SmpHttpClient/vcpkg_ref.txt
     pwd
-    ls 
-    ls ../
-    mkdir /home/eaton
   displayName: 'Prepare VCPKG packages'
 - script: |
     echo Add other tasks to build, test, and deploy your project.
