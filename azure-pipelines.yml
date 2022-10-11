@@ -29,7 +29,7 @@ steps:
     echo See https://aka.ms/yaml
   displayName: 'Run a multi-line script'
 - task: CMake@1
-  displayName: 'CMake ..'
+  displayName: 'CMake .. --preset linux-debug'
   inputs:
     cmakeArgs: ' ..'
 - task: CMake@1
