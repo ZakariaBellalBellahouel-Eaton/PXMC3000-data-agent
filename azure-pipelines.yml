@@ -23,7 +23,7 @@ steps:
     pwd
     ls 
     ls ../
-    mkdir /usr/Eaton
+    mkdir /usr/local/Eaton
   displayName: 'Prepare VCPKG packages'
 - script: |
     echo Add other tasks to build, test, and deploy your project.
