@@ -18,13 +18,17 @@ steps:
     ./bootstrap-vcpkg.sh
     ./vcpkg integrate install
     ./vcpkg @../SmpHttpClient/vcpkg_ref.txt
+    cd ..
+    ls
+    cd ..
+    ls
+    cd ..
+    ls
   displayName: 'Prepare VCPKG packages'
-
 - script: |
     echo Add other tasks to build, test, and deploy your project.
     echo See https://aka.ms/yaml
   displayName: 'Run a multi-line script'
-
 - task: CMake@1
   displayName: 'CMake ..'
   inputs:
