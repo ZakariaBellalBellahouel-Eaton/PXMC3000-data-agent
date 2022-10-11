@@ -21,6 +21,8 @@ steps:
     ./vcpkg integrate install
     ./vcpkg @../SmpHttpClient/vcpkg_ref.txt
     pwd
+    ls 
+    ls ../
   displayName: 'Prepare VCPKG packages'
 - script: |
     echo Add other tasks to build, test, and deploy your project.
@@ -29,7 +31,7 @@ steps:
 - task: CMake@1
   displayName: 'CMake .'
   inputs:
-    cmakeArgs: '--list-presets=all .'
+    cmakeArgs: '--list-presets=all ../SmpHttpClient'
 - task: CMake@1
   displayName: 'CMake .'
   inputs:
