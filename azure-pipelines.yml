@@ -11,8 +11,13 @@ pool:
   vmImage: ubuntu-latest
 
 steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+- script: |
+    git clone https://github.com/Microsoft/vcpkg
+    cd vcpkg
+    .\bootstrap-vcpkg.bat
+    .\vcpkg integrate install
+    .\vcpkg @..\SmpHttpClient\vcpkg_ref.txt
+  displayName: 'Prepare VCPKG packages'
 
 - script: |
     echo Add other tasks to build, test, and deploy your project.
