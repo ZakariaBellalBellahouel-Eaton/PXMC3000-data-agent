@@ -26,6 +26,7 @@ steps:
   displayName: 'Prepare VCPKG packages'
 - script: |
     ls 
+    apt install cmake -y
     Cmake --build . --list-presets=all ../ --preset linux-debug
   displayName: 'CMake build'
 - script: |
