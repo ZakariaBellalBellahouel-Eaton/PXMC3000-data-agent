@@ -31,10 +31,10 @@ steps:
     echo Add other tasks to build, test, and deploy your project.
     echo See https://aka.ms/yaml
   displayName: 'Run a multi-line script'
-- task: CMake@1
-  displayName: 'CMake ..'
-  inputs:
-    cmakeArgs: '..'
+#- task: CMake@1
+#  displayName: 'CMake ..'
+#  inputs:
+#    cmakeArgs: '..'
 - task: CMake@1
   displayName: 'CMake --build . --config Debug -DCMAKE_TOOLCHAIN_FILE=vcpkg/scripts/buildsystems/vcpkg.cmake'
   inputs:
