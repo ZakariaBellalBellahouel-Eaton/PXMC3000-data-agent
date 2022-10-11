@@ -20,5 +20,10 @@ steps:
   displayName: 'Run a multi-line script'
 
 - task: CMake@1
+  displayName: 'CMake ..'
   inputs:
-    cmakeArgs: 
+    cmakeArgs: '..'
+- task: CMake@1
+  displayName: 'CMake --build --config debug'
+  inputs:
+    cmakeArgs: '--build --config Debug'
