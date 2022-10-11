@@ -25,6 +25,10 @@ steps:
     ls ../
   displayName: 'Prepare VCPKG packages'
 - script: |
+    ls 
+    Cmake --build . --list-presets=all ../ --preset linux-debug
+  displayName: 'CMake build'
+- script: |
     echo Add other tasks to build, test, and deploy your project.
     echo See https://aka.ms/yaml
   displayName: 'Run a multi-line script'
@@ -32,6 +36,7 @@ steps:
   displayName: 'CMake .'
   inputs:
     cmakeArgs: ' --build . --list-presets=all ../ --preset linux-debug'
+
 - task: CMake@1
   displayName: 'CMake --build  --config Debug --preset linux-debug' #-DCMAKE_TOOLCHAIN_FILE=vcpkg/scripts/buildsystems/vcpkg.cmake'
   inputs:
