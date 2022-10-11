@@ -17,6 +17,8 @@ steps:
     ls
     ./bootstrap-vcpkg.sh
     ./vcpkg integrate install
+    cd ..
+    ls
     ./vcpkg @..\SmpHttpClient\vcpkg_ref.txt
   displayName: 'Prepare VCPKG packages'
 
