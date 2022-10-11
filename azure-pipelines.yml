@@ -31,7 +31,7 @@ steps:
 - task: CMake@1
   displayName: 'CMake .. --preset linux-debug'
   inputs:
-    cmakeArgs: ' ..'
+    cmakeArgs: '.. --preset linux-debug'
 - task: CMake@1
   displayName: 'CMake --list-presets=all ../'
   inputs:
