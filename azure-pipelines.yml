@@ -29,7 +29,8 @@ steps:
     cd /home/vsts/work/1/s/vcpkg
     ./vcpkg list
     cd /home/vsts/work/1/s/SmpHttpClient
-    sudo cmake .. -G "Ninja" --preset linux-debug
+    sudo cmake -G "Ninja"  -DCMAKE_BUILD_TYPE:STRING="Debug" -DCMAKE_INSTALL_PREFIX:PATH="/usr/local/share/SmpHttpClient/install/linux-debug" -DCMAKE_TOOLCHAIN_FILE:FILEPATH="/usr/local/share/vcpkg/scripts/buildsystems/vcpkg.cmake"  CMakeLists.txt
+    #sudo cmake .. -G "Ninja" --preset linux-debug
   displayName: 'Cmake build'
 - task: CMake@1
   displayName: 'CMake .. --preset linux-debug'
