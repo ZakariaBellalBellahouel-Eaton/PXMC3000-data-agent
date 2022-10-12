@@ -20,17 +20,22 @@ steps:
     ./vcpkg install curl
   displayName: 'Prepare VCPKG packages'
 - script: |
+    echo Step 1: installing packages with apt ...
     sudo apt install -y ninja-build cmake
+    echo Step 2: Creating the directories ...
     sudo mkdir /usr/local/share/SmpHttpClient /usr/local/share/SmpHttpClient/bin /usr/local/share/SmpHttpClient/install
-    ls  /usr/local/share/ /usr/local/share/SmpHttpClient
-    ls /usr/lib/x86_64-linux-gnu/
+    echo Step 3: Settings permission for the new directories ...
+    sudo chown -R vsts:docker /usr/local/share/SmpHttpClient
+    ls -ll /usr/local/share/ /usr/local/share/SmpHttpClient
+    ls -ll /usr/lib/x86_64-linux-gnu/
   displayName: 'Create Directories & Install required package - apt'
 - script: |
     ls -ll /home/vsts/work/1/s /home/vsts/work/1/s/vcpkg
     cd /home/vsts/work/1/s/vcpkg
     ./vcpkg list
     cd /home/vsts/work/1/s/SmpHttpClient
-    sudo cmake .. --preset linux-debug
+    sudo cmake /home/vsts/work/1/s/SmpHttpClient/CMakeLists.txt --preset linux-debug
+    cd 
     sudo cmake --build ..
     ls -ll /usr/local/share/SmpHttpClient/bin/linux-debug /usr/local/share/SmpHttpClient/bin/linux-debug/SmpHttpClient
   displayName: 'Cmake build'
