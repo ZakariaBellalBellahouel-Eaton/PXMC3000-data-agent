@@ -12,6 +12,7 @@ pool:
 
 steps:
 - script: |
+    ls -ll /usr/local/share/ /usr/local/share
     git clone https://github.com/Microsoft/vcpkg
     cd vcpkg
     ./bootstrap-vcpkg.sh
@@ -31,8 +32,6 @@ steps:
   displayName: 'Create Directories & Install required package - apt'
 - script: |
     ls -ll /home/vsts/work/1/s /home/vsts/work/1/s/vcpkg
-    cd /home/vsts/work/1/s/vcpkg
-    ./vcpkg list
     cd /home/vsts/work/1/s/SmpHttpClient
     sudo cmake /home/vsts/work/1/s/SmpHttpClient/CMakeLists.txt --preset linux-debug
     cd 
