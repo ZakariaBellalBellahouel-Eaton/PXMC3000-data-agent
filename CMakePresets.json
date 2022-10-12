@@ -77,7 +77,7 @@
           "sourceDir": "$env{HOME}/.vs/$ms{projectDirName}"
         }
       },
-      "toolchainFile": "/Eaton/code/vcpkg/scripts/buildsystems/vcpkg.cmake"
+      "toolchainFile": "/home/vsts/work/1/s/vcpkg/scripts/buildsystems/vcpkg.cmake"
     },
     {
       "name": "macos-debug",
