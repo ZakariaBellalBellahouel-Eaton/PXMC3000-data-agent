@@ -19,11 +19,10 @@ steps:
     ./bootstrap-vcpkg.sh
     ./vcpkg integrate install
     ./vcpkg @../SmpHttpClient/vcpkg_ref.txt
-    #./vcpkg install curl
   displayName: 'Prepare VCPKG packages'
 - script: |
     echo Step 1: installing packages with apt ...
-    sudo apt install -y ninja-build cmake
+    sudo apt install -y ninja-build cmake libcurl4-openssl-dev
     #echo Step 2: Creating the directories ...
     #sudo mkdir /usr/local/share/SmpHttpClient /usr/local/share/SmpHttpClient/bin /usr/local/share/SmpHttpClient/install
     echo Step 3: Settings permission for the new directories ...
