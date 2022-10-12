@@ -19,7 +19,7 @@ steps:
     ./bootstrap-vcpkg.sh
     ./vcpkg integrate install
     ./vcpkg @../SmpHttpClient/vcpkg_ref.txt
-    ./vcpkg install curl
+    #./vcpkg install curl
   displayName: 'Prepare VCPKG packages'
 - script: |
     echo Step 1: installing packages with apt ...
