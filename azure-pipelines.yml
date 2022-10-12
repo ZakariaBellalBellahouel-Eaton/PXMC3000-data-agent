@@ -17,9 +17,10 @@ steps:
     ./bootstrap-vcpkg.sh
     ./vcpkg integrate install
     ./vcpkg @../SmpHttpClient/vcpkg_ref.txt
+    ./vcpkg install curl
   displayName: 'Prepare VCPKG packages'
 - script: |
-    sudo apt install -y ninja-build cmake curl
+    sudo apt install -y ninja-build cmake
     sudo mkdir /usr/local/share/SmpHttpClient /usr/local/share/SmpHttpClient/bin /usr/local/share/SmpHttpClient/install
     ls  /usr/local/share/ /usr/local/share/SmpHttpClient
     ls /usr/lib/x86_64-linux-gnu/
@@ -29,8 +30,7 @@ steps:
     cd /home/vsts/work/1/s/vcpkg
     ./vcpkg list
     cd /home/vsts/work/1/s/SmpHttpClient
-    sudo cmake -G "Ninja"  -DCMAKE_BUILD_TYPE:STRING="Debug" -DCMAKE_INSTALL_PREFIX:PATH="/usr/local/share/SmpHttpClient/install/linux-debug" -DCMAKE_TOOLCHAIN_FILE:FILEPATH="/usr/local/share/vcpkg/scripts/buildsystems/vcpkg.cmake"  CMakeLists.txt
-    #sudo cmake .. -G "Ninja" --preset linux-debug
+    sudo cmake .. --preset linux-debug
   displayName: 'Cmake build'
 - task: CMake@1
   displayName: 'CMake .. --preset linux-debug'
