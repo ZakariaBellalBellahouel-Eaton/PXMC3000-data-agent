@@ -19,7 +19,7 @@ steps:
     ./vcpkg @../SmpHttpClient/vcpkg_ref.txt
   displayName: 'Prepare VCPKG packages'
 - script: |
-    sudo apt install -y ninja-build cmake
+    sudo apt install -y ninja-build cmake curl
     sudo mkdir /usr/local/share/SmpHttpClient /usr/local/share/SmpHttpClient/bin /usr/local/share/SmpHttpClient/install
     ls  /usr/local/share/ /usr/local/share/SmpHttpClient
   displayName: 'Create Directories & Install required package - apt'
