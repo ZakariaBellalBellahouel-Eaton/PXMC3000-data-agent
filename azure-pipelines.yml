@@ -29,7 +29,7 @@ steps:
     cd /home/vsts/work/1/s/vcpkg
     ./vcpkg list
     cd /home/vsts/work/1/s/SmpHttpClient
-    sudo cmake .. --preset linux-debug
+    sudo cmake .. -G "Ninja" --preset linux-debug
   displayName: 'Cmake build'
 - task: CMake@1
   displayName: 'CMake .. --preset linux-debug'
