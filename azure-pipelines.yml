@@ -31,6 +31,7 @@ steps:
     ./vcpkg list
     cd /home/vsts/work/1/s/SmpHttpClient
     sudo cmake .. --preset linux-debug
+    ls /usr/local/share/SmpHttpClient/bin/linux-debug /usr/local/share/SmpHttpClient/bin/linux-debug/SmpHttpClient
   displayName: 'Cmake build'
 - task: CMake@1
   displayName: 'CMake .. --preset linux-debug'
