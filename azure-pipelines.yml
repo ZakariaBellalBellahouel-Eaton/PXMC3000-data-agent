@@ -26,13 +26,13 @@ steps:
     ls /usr/lib/x86_64-linux-gnu/
   displayName: 'Create Directories & Install required package - apt'
 - script: |
-    ls /home/vsts/work/1/s /home/vsts/work/1/s/vcpkg
+    ls -ll /home/vsts/work/1/s /home/vsts/work/1/s/vcpkg
     cd /home/vsts/work/1/s/vcpkg
     ./vcpkg list
     cd /home/vsts/work/1/s/SmpHttpClient
     sudo cmake .. --preset linux-debug
     sudo cmake --build ..
-    ls /usr/local/share/SmpHttpClient/bin/linux-debug /usr/local/share/SmpHttpClient/bin/linux-debug/SmpHttpClient
+    ls -ll /usr/local/share/SmpHttpClient/bin/linux-debug /usr/local/share/SmpHttpClient/bin/linux-debug/SmpHttpClient
   displayName: 'Cmake build'
 - task: CMake@1
   displayName: 'CMake .. --preset linux-debug'
