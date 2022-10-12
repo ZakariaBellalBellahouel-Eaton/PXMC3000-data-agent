@@ -24,39 +24,15 @@ steps:
 - script: |
     echo Step 1: installing packages with apt ...
     sudo apt install -y ninja-build cmake
-    echo Step 2: Creating the directories ...
-    sudo mkdir /usr/local/share/SmpHttpClient /usr/local/share/SmpHttpClient/bin /usr/local/share/SmpHttpClient/install
+    #echo Step 2: Creating the directories ...
+    #sudo mkdir /usr/local/share/SmpHttpClient /usr/local/share/SmpHttpClient/bin /usr/local/share/SmpHttpClient/install
     echo Step 3: Settings permission for the new directories ...
-    sudo chown -R vsts:docker /usr/local/share/SmpHttpClient
-    ls -ll /usr/local/share/ /usr/local/share/SmpHttpClient
-    ls -ll /usr/lib/x86_64-linux-gnu/
+    #sudo chown -R vsts:docker /usr/local/share/SmpHttpClient
+    #ls -ll /usr/local/share/ /usr/local/share/SmpHttpClient
+    #ls -ll /usr/lib/x86_64-linux-gnu/
   displayName: 'Create Directories & Install required package - apt'
 - script: |
-    ls -ll /home/vsts/work/1/s /home/vsts/work/1/s/vcpkg
-    cd /home/vsts/work/1/s/SmpHttpClient
-    sudo cmake /home/vsts/work/1/s/SmpHttpClient/CMakeLists.txt --preset linux-debug
-    cd 
-    sudo cmake --build ..
-    ls -ll /usr/local/share/SmpHttpClient/bin/linux-debug /usr/local/share/SmpHttpClient/bin/linux-debug/SmpHttpClient
+    sudo cmake /home/vsts/work/1/s/SmpHttpClient/  --preset linux-debug -DCMAKE_TOOLCHAIN_FILE:FILEPATH="/home/vsts/work/1/s/vcpkg/scripts/buildsystems/vcpkg.cmake"
+    sudo cmake --build /usr/local/share/SmpHttpClient/bin/linux-debug --config Release
+    ls -ll /usr/local/share/SmpHttpClient/bin/linux-debug/SmpHttpClient/
   displayName: 'Cmake build'
-- task: CMake@1
-  displayName: 'CMake .. --preset linux-debug'
-  inputs:
-    cmakeArgs: '.. --preset linux-debug'
-- task: CMake@1
-  displayName: 'CMake --list-presets=all ../'
-  inputs:
-    cmakeArgs: '--list-presets=all ../'
-- task: CMake@1
-  displayName: 'CMake --preset linux-debug'
-  inputs:
-    cmakeArgs: '--preset linux-debug'
-- task: CMake@1
-  displayName: 'CMake build'
-  inputs:
-    cmakeArgs: '--build . --config Debug'
-
-- task: CMake@1
-  displayName: 'CMake --build  --config Debug --preset linux-debug' #-DCMAKE_TOOLCHAIN_FILE=vcpkg/scripts/buildsystems/vcpkg.cmake'
-  inputs:
-    cmakeArgs: '--build  --config Debug --preset linux-debug'
