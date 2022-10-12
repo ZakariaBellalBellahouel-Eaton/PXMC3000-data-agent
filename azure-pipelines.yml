@@ -12,20 +12,23 @@ pool:
 
 steps:
 - script: |
-    mkdir  /Eaton /Eaton/code
-    cd /Eaton/code
     git clone https://github.com/Microsoft/vcpkg
     cd vcpkg
-    ls
     ./bootstrap-vcpkg.sh
     ./vcpkg integrate install
     ./vcpkg @../SmpHttpClient/vcpkg_ref.txt
-    pwd
   displayName: 'Prepare VCPKG packages'
 - script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+    sudo apt install -y ninja-build cmake
+  displayName: 'Install required package - apt'
+- script: |
+    ls /home/vsts/work/1/s /home/vsts/work/1/s/vcpkg
+    cd /home/vsts/work/1/s/vcpkg
+    ./vcpkg list
+    ./home/vsts/work/1/s/vcpkg/vcpkg list
+    cd /home/vsts/work/1/s/SmpHttpClient
+    cmake .. --preset linux-debug
+  displayName: 'Cmake build'
 - task: CMake@1
   displayName: 'CMake .. --preset linux-debug'
   inputs:
