@@ -32,7 +32,7 @@ steps:
     #ls -ll /usr/lib/x86_64-linux-gnu/
   displayName: 'Create Directories & Install required package - apt'
 - script: |
-    sudo cmake /home/vsts/work/1/s/  --preset linux-debug -DCMAKE_TOOLCHAIN_FILE:FILEPATH="/home/vsts/work/1/s/vcpkg/scripts/buildsystems/vcpkg.cmake"
+    sudo cmake /home/vsts/work/1/s/  --preset linux-debug -DCMAKE_TOOLCHAIN_FILE:FILEPATH="/usr/local/share/vcpkg/scripts/buildsystems/vcpkg.cmake"
     sudo cmake --build /usr/local/share/SmpHttpClient/bin/linux-debug --config Release
     ls -ll /usr/local/share/SmpHttpClient/bin/linux-debug/SmpHttpClient/
   displayName: 'Cmake build'
