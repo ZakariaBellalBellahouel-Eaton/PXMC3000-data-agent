@@ -35,3 +35,10 @@ steps:
     sudo cmake --build /usr/local/share/SmpHttpClient/bin/linux-debug --config Release
     ls -ll /usr/local/share/SmpHttpClient/bin/linux-debug/SmpHttpClient/
   displayName: 'Cmake build'
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'SmpDeviceAgent'
+    publishLocation: 'Container'
+  displayName: 'Publish Binarie'
+
