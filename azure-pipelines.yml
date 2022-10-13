@@ -33,8 +33,10 @@ steps:
 - script: |
     sudo cmake /home/vsts/work/1/s/  --preset linux-debug -DCMAKE_TOOLCHAIN_FILE:FILEPATH="/usr/local/share/vcpkg/scripts/buildsystems/vcpkg.cmake"
     sudo cmake --build /usr/local/share/SmpHttpClient/bin/linux-debug --config Release
-    ls -ll /usr/local/share/SmpHttpClient/bin/linux-debug/SmpHttpClient/
   displayName: 'Cmake build'
+- script: |
+    sudo cp /usr/local/share/SmpHttpClient/bin/linux-debug/SmpHttpClient/SmpHttpClient /home/vsts/work/1/a/SmpHttpClient
+  displayName: 'Copy binaries'
 - task: PublishBuildArtifacts@1
   inputs:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
