@@ -12,9 +12,10 @@ pool:
 
 steps:
 - script: |
+    export VCPKG_ROOT=/usr/local/share/vcpkg
     git clone https://github.com/Microsoft/vcpkg
     cd vcpkg
-    ./bootstrap-vcpkg.sh --vcpkg-root "/usr/local/share/vcpkg"
+    ./bootstrap-vcpkg.sh
     ./vcpkg integrate install
     ./vcpkg @../SmpDataAgent/vcpkg_ref.txt
   displayName: 'Prepare VCPKG packages'
