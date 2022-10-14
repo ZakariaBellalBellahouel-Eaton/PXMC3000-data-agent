@@ -15,9 +15,10 @@ steps:
     set -o xtrace
     git clone https://github.com/Microsoft/vcpkg
     cd vcpkg
-    ./bootstrap-vcpkg.sh
+    echo $VCPKG_ROOT
+    ./bootstrap-vcpkg.sh -disableMetrics
     ./vcpkg integrate install --vcpkg-root "/usr/local/share/vcpkg"
-    ./vcpkg @../SmpDataAgent/vcpkg_ref.txt
+    ./vcpkg @../SmpDataAgent/vcpkg_ref.txt --vcpkg-root "/usr/local/share/vcpkg"
   displayName: 'Prepare VCPKG packages'
 - script: |
     echo Step 1: installing packages with apt ...
