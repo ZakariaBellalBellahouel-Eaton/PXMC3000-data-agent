@@ -62,8 +62,8 @@
       "name": "linux-debug",
       "displayName": "Linux Debug",
       "generator": "Ninja",
-      "binaryDir": "/usr/local/share/SmpHttpClient/bin/${presetName}",
-      "installDir": "/usr/local/share/SmpHttpClient/install/${presetName}",
+      "binaryDir": "/usr/local/share/pxmc3000/SmpDataAgent/bin/${presetName}",
+      "installDir": "/usr/local/share/pxmc3000/SmpDataAgent/install/${presetName}",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug"
       },
@@ -77,7 +77,7 @@
           "sourceDir": "$env{HOME}/.vs/$ms{projectDirName}"
         }
       },
-      "toolchainFile": "/usr/local/share/vcpkg/scripts/buildsystems/vcpkg.cmake"
+      "toolchainFile": "/usr/local/share/pxmc3000/vcpkg/scripts/buildsystems/vcpkg.cmake"
     },
     {
       "name": "macos-debug",

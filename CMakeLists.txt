@@ -3,7 +3,7 @@
 #
 cmake_minimum_required (VERSION 3.8)
 
-project ("SmpHttpClient")
+project ("SmpDataAgent")
 
 # Include sub-projects.
-add_subdirectory ("SmpHttpClient")
+add_subdirectory ("SmpDataAgent")

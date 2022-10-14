@@ -1,6 +1,6 @@
 ﻿// Smp3050RestApiRequester.cpp : Defines the entry point for the application.
 
-#include "SmpHttpClient.h"
+#include "SmpDataAgent.h"
 
 using namespace std;
 using namespace smp::data::dataAccess;
