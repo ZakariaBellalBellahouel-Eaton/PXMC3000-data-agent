@@ -15,6 +15,7 @@ steps:
     set -o xtrace
     export VCPKG_ROOT=/usr/local/share/pxmc3000/vcpkg
     export PXMC_ROOT=/usr/local/share/pxmc3000
+    export SOURCE_ROOT=/home/vsts/work/1/s/
     if [ ! -d $VCPKG_ROOT ]; then 
       sudo install -D -d -o vsts -g docker /usr/local/share/pxmc3000/vcpkg
     elif [ ! -d $PXMC_ROOT ]; then 
@@ -25,14 +26,14 @@ steps:
     cd vcpkg
     ./bootstrap-vcpkg.sh -disableMetrics
     ./vcpkg integrate install --vcpkg-root $VCPKG_ROOT
-    ./vcpkg @../SmpDataAgent/vcpkg_ref.txt --vcpkg-root $VCPKG_ROOT
+    ./vcpkg @$SOURCE_ROOT/SmpDataAgent/vcpkg_ref.txt --vcpkg-root $VCPKG_ROOT
   displayName: 'Prepare the environment & VCPKG packages'
 - script: |
     echo Step 1: installing packages with apt ...
     sudo apt install -y ninja-build cmake libcurl4-openssl-dev
   displayName: 'Install required package - apt'
 - script: |
-    sudo cmake /home/vsts/work/1/s/  --preset linux-debug -DCMAKE_TOOLCHAIN_FILE:FILEPATH="/usr/local/share/vcpkg/scripts/buildsystems/vcpkg.cmake"
+    sudo cmake /home/vsts/work/1/s/  --preset linux-debug -DCMAKE_TOOLCHAIN_FILE:FILEPATH="/usr/local/share/pxmc3000/vcpkg/scripts/buildsystems/vcpkg.cmake"
     sudo cmake --build /usr/local/share/pxmc3000/SmpDataAgent/bin/linux-debug --config Release
   displayName: 'Cmake build'
 - script: |
