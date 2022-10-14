@@ -33,6 +33,10 @@ steps:
     sudo apt install -y ninja-build cmake libcurl4-openssl-dev
   displayName: 'Install required package - apt'
 - script: |
+    ls -la /usr/local/share/pxmc3000/SmpDataAgent/bin/linux-debug/
+    ls -la /usr/local/share/pxmc3000/SmpDataAgent/bin
+    ls -la /usr/local/share/pxmc3000/SmpDataAgent/
+    ls -la /usr/local/share/pxmc3000/
     cmake /home/vsts/work/1/s/  --preset linux-debug -DCMAKE_TOOLCHAIN_FILE:FILEPATH="/usr/local/share/pxmc3000/vcpkg/scripts/buildsystems/vcpkg.cmake"
     cmake --build /usr/local/share/pxmc3000/SmpDataAgent/bin/linux-debug --config Release
   displayName: 'Cmake build'
