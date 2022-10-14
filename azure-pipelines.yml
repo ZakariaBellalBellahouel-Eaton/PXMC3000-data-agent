@@ -13,14 +13,10 @@ pool:
 steps:
 - script: |
     set -o xtrace
-    pwd
-    whoami
-    if [ -d $VCPKG_ROOT ]; then sudo rm -Rf VCPKG_ROOT; fi
-    ls -la /usr/local/share
     git clone https://github.com/Microsoft/vcpkg
     cd vcpkg
     ./bootstrap-vcpkg.sh
-    ./vcpkg integrate install
+    ./vcpkg integrate install --vcpkg-root "/usr/local/share/vcpkg"
     ./vcpkg @../SmpDataAgent/vcpkg_ref.txt
   displayName: 'Prepare VCPKG packages'
 - script: |
