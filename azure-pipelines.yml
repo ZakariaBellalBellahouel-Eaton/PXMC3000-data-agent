@@ -17,9 +17,9 @@ steps:
     export PXMC_ROOT=/usr/local/share/pxmc3000
     export SOURCE_ROOT=/home/vsts/work/1/s/
     if [ ! -d $VCPKG_ROOT ]; then 
-      sudo install -D -d -o vsts -g docker /usr/local/share/pxmc3000/vcpkg
+      sudo install -D -d -o $(whoami) -g $(id -Gn) /usr/local/share/pxmc3000/vcpkg
     elif [ ! -d $PXMC_ROOT ]; then 
-      sudo install -D -d -o vsts -g docker /usr/local/share/pxmc3000 
+      sudo install -D -d -o $(whoami) -g $(id -Gn) /usr/local/share/pxmc3000 
     fi
     cd $PXMC_ROOT
     git clone https://github.com/Microsoft/vcpkg
