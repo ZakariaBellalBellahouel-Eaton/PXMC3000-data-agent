@@ -15,7 +15,7 @@ steps:
     set -o xtrace
     export VCPKG_ROOT=/usr/local/share/pxmc3000/vcpkg
     export PXMC_ROOT=/usr/local/share/pxmc3000
-    if [[ ! -d $PXMC_ROOT ]]; then sudo install -d -o vsts -g docker /usr/local/share/pxmc3000 fi
+    if [ ! -d $PXMC_ROOT ]; then sudo install -d -o vsts -g docker /usr/local/share/pxmc3000; fi
   displayName: 'Prepare the environment'
 - script: |
     set -o xtrace
