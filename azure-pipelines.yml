@@ -12,7 +12,7 @@ pool:
 
 steps:
 - script: |
-    cd /usr/local/share/
+    set -o xtraceunset
     git clone https://github.com/Microsoft/vcpkg
     cd vcpkg
     ./bootstrap-vcpkg.sh
