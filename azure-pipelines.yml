@@ -12,7 +12,8 @@ pool:
 
 steps:
 - script: |
-    set -o xtraceunset
+    set -o xtrace
+    if [ -d $VCPKG_ROOT ]; then rm -Rf VCPKG_ROOT; fi
     git clone https://github.com/Microsoft/vcpkg
     cd vcpkg
     ./bootstrap-vcpkg.sh
