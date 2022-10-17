@@ -32,7 +32,7 @@ int main()
 	const string jsonSMPIdsID = "IDs";
 	const string jsonSMPInformationID = "Informations";
 	// Certificate path
-	const string SSLCertificate = "/Eaton/certificates/Eaton_root_ca_2.pem";
+	const string SSLCertificate = "/usr/local/share/pxmc3000/certificates/Eaton_root_ca_2.pem";
 	// Refresh Time
 	const int refreshTime = 2;
 	// SMP IP adress
@@ -45,7 +45,7 @@ int main()
 	//SMP entity
 	//smpDevice smpDeviceObject;
 	// SMP Configuration Database path
-	const char* configurationDatabaseFullPath = "/usr/share/Eaton/database/SMPConfiguration.db";
+	const char* configurationDatabaseFullPath = "/usr/local/share/pxmc3000/database/SMPConfiguration.db";
 	//const char* getSMPDeviceIDUri = "api/dashboard/v1/name-plate-informations/";
 	const string getSMPDeviceIDUri = "api/dashboard/v1/name-plate-informations/";
 	const int loopwaitingTimeMilliseconds = 60000;
