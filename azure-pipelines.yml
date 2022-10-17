@@ -12,35 +12,42 @@ pool:
 
 steps:
 - script: |
-    ls -ll /usr/local/share/ /usr/local/share
-    ls -ll /home/vsts/work/1/s /home/vsts/work/1/s/vcpkg
+    set -o xtrace
+    export VCPKG_ROOT=/usr/local/share/pxmc3000/vcpkg
+    export SMPDATAAGENT_ROOT=/usr/local/share/pxmc3000/SmpDataAgent
+    export PXMC_ROOT=/usr/local/share/pxmc3000
+    export SOURCE_ROOT=/home/vsts/work/1/s/
+    if [ ! -d $VCPKG_ROOT ]; then 
+      sudo install -D -d -o $(whoami) -g $(id -Gn) $VCPKG_ROOT
+    fi
+    if [ ! -d $SMPDATAAGENT_ROOT ]; then 
+      sudo install -D -d -o $(whoami) -g $(id -Gn) $SMPDATAAGENT_ROOT
+    fi
+    cd $PXMC_ROOT
     git clone https://github.com/Microsoft/vcpkg
     cd vcpkg
-    ./bootstrap-vcpkg.sh
-    ./vcpkg integrate install
-    ./vcpkg @../SmpHttpClient/vcpkg_ref.txt
-  displayName: 'Prepare VCPKG packages'
+    ./bootstrap-vcpkg.sh -disableMetrics
+    ./vcpkg integrate install --vcpkg-root $VCPKG_ROOT
+    ./vcpkg @$SOURCE_ROOT/SmpDataAgent/vcpkg_ref.txt --vcpkg-root $VCPKG_ROOT
+  displayName: 'Prepare the environment & VCPKG packages'
 - script: |
     echo Step 1: installing packages with apt ...
     sudo apt install -y ninja-build cmake libcurl4-openssl-dev
-    #echo Step 2: Creating the directories ...
-    #sudo mkdir /usr/local/share/SmpHttpClient /usr/local/share/SmpHttpClient/bin /usr/local/share/SmpHttpClient/install
-    echo Step 3: Settings permission for the new directories ...
-    #sudo chown -R vsts:docker /usr/local/share/SmpHttpClient
-    #ls -ll /usr/local/share/ /usr/local/share/SmpHttpClient
-    #ls -ll /usr/lib/x86_64-linux-gnu/
-  displayName: 'Create Directories & Install required package - apt'
+  displayName: 'Install required package - apt'
 - script: |
-    sudo cmake /home/vsts/work/1/s/  --preset linux-debug -DCMAKE_TOOLCHAIN_FILE:FILEPATH="/usr/local/share/vcpkg/scripts/buildsystems/vcpkg.cmake"
-    sudo cmake --build /usr/local/share/SmpHttpClient/bin/linux-debug --config Release
+    ls -la /usr/local/share/pxmc3000/SmpDataAgent/bin/linux-debug/
+    ls -la /usr/local/share/pxmc3000/SmpDataAgent/bin
+    ls -la /usr/local/share/pxmc3000/SmpDataAgent/
+    ls -la /usr/local/share/pxmc3000/
+    cmake /home/vsts/work/1/s/  --preset linux-debug -DCMAKE_TOOLCHAIN_FILE:FILEPATH="/usr/local/share/pxmc3000/vcpkg/scripts/buildsystems/vcpkg.cmake"
+    cmake --build /usr/local/share/pxmc3000/SmpDataAgent/bin/linux-debug --config Release
   displayName: 'Cmake build'
 - script: |
-    sudo cp /usr/local/share/SmpHttpClient/bin/linux-debug/SmpHttpClient/SmpHttpClient /home/vsts/work/1/a/SmpHttpClient
+    cp /usr/local/share/pxmc3000/SmpDataAgent/bin/linux-debug/SmpDataAgent/SmpDataAgent /home/vsts/work/1/a/SmpDataAgent
   displayName: 'Copy binaries'
 - task: PublishBuildArtifacts@1
   inputs:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-    ArtifactName: 'SmpDeviceAgent'
+    ArtifactName: 'SmpDataAgent'
     publishLocation: 'Container'
   displayName: 'Publish Binarie'
-
