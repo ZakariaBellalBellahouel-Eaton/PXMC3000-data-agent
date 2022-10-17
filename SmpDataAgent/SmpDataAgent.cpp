@@ -19,6 +19,10 @@ static size_t getApiData(void* contents, size_t size, size_t nmemb, void* userp)
 
 int main()
 {
+	try
+	{
+
+	
 	// Todo : replace it in logging file
 	syslog(LOG_INFO, "SmpHttpClient service started ...");
 
@@ -201,7 +205,13 @@ int main()
 
 	curl_slist_free_all(headers);
 
-	return 1;
+	return 0;
+	}
+	catch (const std::exception& ex)
+	{
+		cout << "SmpDataAgent exception, details : ";
+		cout << ex.what();
+	}
 }
 
 // Implementation section
