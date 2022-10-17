@@ -31,18 +31,16 @@ steps:
     ./vcpkg @$SOURCE_ROOT/SmpDataAgent/vcpkg_ref.txt --vcpkg-root $VCPKG_ROOT
   displayName: 'Prepare the environment & VCPKG packages'
 - script: |
-    echo Step 1: installing packages with apt ...
+    echo installing packages with apt ...
     sudo apt install -y ninja-build cmake libcurl4-openssl-dev
   displayName: 'Install required package - apt'
 - script: |
-    ls -la /usr/local/share/pxmc3000/SmpDataAgent/bin/linux-debug/
-    ls -la /usr/local/share/pxmc3000/SmpDataAgent/bin
-    ls -la /usr/local/share/pxmc3000/SmpDataAgent/
-    ls -la /usr/local/share/pxmc3000/
+    set -o xtrace
     cmake /home/vsts/work/1/s/  --preset linux-debug -DCMAKE_TOOLCHAIN_FILE:FILEPATH="/usr/local/share/pxmc3000/vcpkg/scripts/buildsystems/vcpkg.cmake"
     cmake --build /usr/local/share/pxmc3000/SmpDataAgent/bin/linux-debug --config Release
   displayName: 'Cmake build'
 - script: |
+    set -o xtrace
     cp /usr/local/share/pxmc3000/SmpDataAgent/bin/linux-debug/SmpDataAgent/SmpDataAgent /home/vsts/work/1/a/SmpDataAgent
   displayName: 'Copy binaries'
 - task: PublishBuildArtifacts@1
