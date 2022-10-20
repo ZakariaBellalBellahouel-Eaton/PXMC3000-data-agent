@@ -37,7 +37,7 @@ steps:
 - script: |
     set -o xtrace
     cmake /home/vsts/work/1/s/ -G "Ninja"  --preset linux-debug -DCMAKE_TOOLCHAIN_FILE:FILEPATH="/usr/local/share/pxmc3000/vcpkg/scripts/buildsystems/vcpkg.cmake"
-    cmake --build /usr/local/share/pxmc3000/SmpDataAgent/bin/linux-debug --config Release
+    cmake --build /usr/local/share/pxmc3000/SmpDataAgent/bin/linux-debug --config Debug
   displayName: 'Cmake build'
 - script: |
     set -o xtrace
