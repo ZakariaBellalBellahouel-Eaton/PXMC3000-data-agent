@@ -61,13 +61,18 @@ steps:
        apt-get install -y curl zip unzip tar'
   displayName: 'Install required package - apt'
 - script: |
+    # Activate command tracing
+    set -o xtrace
+    cp /usr/local/share/pxmc3000/azBuildAgent/_work/1/s  /proc/$(sudo lxc-info -n SmpBuildApplication -p -H)/root/usr/local/share/pxmc3000/source
+  displayName: 'Copy source to the container'
+- script: |
     sudo lxc-attach -n SmpBuildApplication -- bash -c '
       # Activate command tracing
       set -o xtrace
       export VCPKG_ROOT=/usr/local/share/pxmc3000/vcpkg
       export SMPDATAAGENT_ROOT=/usr/local/share/pxmc3000/SmpDataAgent
       export PXMC_ROOT=/usr/local/share/pxmc3000
-      export SOURCE_ROOT=/home/vsts/work/1/s/
+      export SOURCE_ROOT=/root/usr/local/share/pxmc3000/source
       if [ ! -d $VCPKG_ROOT ]; then 
         install -D -d -o $(whoami) -g $(id -Gn) $VCPKG_ROOT
       fi
@@ -83,11 +88,6 @@ steps:
       ./vcpkg integrate install --vcpkg-root $VCPKG_ROOT
       ./vcpkg @$SOURCE_ROOT/SmpDataAgent/vcpkg_ref.txt --vcpkg-root $VCPKG_ROOT'
   displayName: 'Prepare the environment & VCPKG packages'
-- script: |
-    # Activate command tracing
-    set -o xtrace
-    cp /usr/local/share/pxmc3000/azBuildAgent/_work/1/s  /proc/$(sudo lxc-info -n SmpBuildApplication -p -H)/root/usr/local/share/pxmc3000/source
-  displayName: 'Copy source to the container'
 - script: |
     sudo lxc-attach -n SmpBuildApplication -- bash -c '
       set -o xtrace
