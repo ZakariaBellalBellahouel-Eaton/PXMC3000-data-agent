@@ -27,7 +27,7 @@ steps:
       fi
       sudo lxc-destroy SmpBuildApplication
     fi
-    sudo lxc-create -n SmpBuildApplication -t debian -- -r Bullseye
+    sudo lxc-create -n SmpBuildApplication -t debian -- -r bullseye
     if [[ $(sudo lxc-info SmpBuildApplication -s -H) != "RUNNING" ]]; then 
       sudo lxc-start SmpBuildApplication
     fi
