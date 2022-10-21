@@ -14,12 +14,10 @@ steps:
 - script: |
     # Activate command tracing
     set -o xtrace
-    apt update
-    apt install lxc -y
     # Install LXC if not installed
-    if [[ ! $(dpkg-query -W -f='${package}\n' lxc 2>/dev/null) ]]; then
-      apt update
-      apt install lxc -y
+    if [[ ! $(sudo dpkg-query -W -f='${package}\n' lxc 2>/dev/null) ]]; then
+      sudo apt update
+      sudo apt install lxc -y
     fi
     # Create the Build Container - Destroy if exists
     if [[ $(sudo lxc-info -n SmpBuildApplication 2>/dev/null) ]]; then 
