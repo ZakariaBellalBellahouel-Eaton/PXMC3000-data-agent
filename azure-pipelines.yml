@@ -22,11 +22,11 @@ steps:
     # Create the Build Container - Destroy if exists
     if [[ $(sudo lxc-info -n SmpBuildApplication 2>/dev/null) ]]; then 
       if [[ $(sudo lxc-info SmpBuildApplication -s -H) == "RUNNING" ]]; then 
-        lxc-stop SmpBuildApplication
+        sudo lxc-stop SmpBuildApplication
       fi
-      lxc-destroy SmpBuildApplication
+      sudo lxc-destroy SmpBuildApplication
     fi
-    lxc-create -n SmpBuildApplication -t debian -- -r bullseye
+    sudo lxc-create -n SmpBuildApplication -t debian -- -r bullseye
     if [[ $(sudo lxc-info SmpBuildApplication -s -H) != "RUNNING" ]]; then 
       sudo lxc-start SmpBuildApplication
     fi
