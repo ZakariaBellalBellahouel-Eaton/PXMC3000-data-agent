@@ -80,6 +80,7 @@ steps:
       install -D -d -o $(whoami) -g $(id -Gn) $SOURCE_ROOT
     fi'
     # Copy source
+    set -o xtrace
     sudo cp -R $DEFAULT_SOURCE_ROOT  /proc/$(sudo lxc-info -n SmpBuildApplication -p -H)/root/usr/local/share/pxmc3000/source
   displayName: 'Create Diretories & Copy source to the container'
 - script: |
