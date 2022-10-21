@@ -50,13 +50,19 @@ steps:
   displayName: 'Create Build Container'
 - script: |
     sudo lxc-attach -n SmpBuildApplication -- bash -c '
+      # Activate command tracing
+      set -o xtrace
       echo installing packages with apt ...
       apt update -y
       apt upgrade -y
-      apt install -y ninja-build cmake libcurl4-openssl-dev git'
+      # Required for build
+      apt install -y ninja-build cmake libcurl4-openssl-dev git
+      # Required for VCPKG
+       apt-get install -y curl zip unzip tar'
   displayName: 'Install required package - apt'
 - script: |
     sudo lxc-attach -n SmpBuildApplication -- bash -c '
+      # Activate command tracing
       set -o xtrace
       export VCPKG_ROOT=/usr/local/share/pxmc3000/vcpkg
       export SMPDATAAGENT_ROOT=/usr/local/share/pxmc3000/SmpDataAgent
@@ -78,6 +84,8 @@ steps:
       ./vcpkg @$SOURCE_ROOT/SmpDataAgent/vcpkg_ref.txt --vcpkg-root $VCPKG_ROOT'
   displayName: 'Prepare the environment & VCPKG packages'
 - script: |
+    # Activate command tracing
+    set -o xtrace
     cp /usr/local/share/pxmc3000/azBuildAgent/_work/1/s  /proc/$(sudo lxc-info -n SmpBuildApplication -p -H)/root/usr/local/share/pxmc3000/source
   displayName: 'Copy source to the container'
 - script: |
@@ -87,6 +95,8 @@ steps:
       cmake --build /usr/local/share/pxmc3000/SmpDataAgent/bin/linux-debug --config Debug'
   displayName: 'Cmake build'
 - script: |
+      # Activate command tracing
+      set -o xtrace
       cp /proc/$(sudo lxc-info -n SmpBuildApplication -p -H)/root/usr/local/share/pxmc3000/SmpDataAgent/bin/linux-debug/SmpDataAgent/SmpDataAgent /usr/local/share/pxmc3000/azBuildAgent/_work/1/a/SmpDataAgent'
       if [[ $(sudo lxc-info SmpBuildApplication -s -H) == "RUNNING" ]]; then 
         lxc-stop SmpBuildApplication
