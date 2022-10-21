@@ -14,6 +14,8 @@ steps:
 - script: |
     # Activate command tracing
     set -o xtrace
+    apt update
+    apt install lxc -y
     # Install LXC if not installed
     if [[ ! $(dpkg-query -W -f='${package}\n' lxc 2>/dev/null) ]]; then
       apt update
@@ -56,7 +58,7 @@ steps:
       # Required for build
       apt install -y ninja-build cmake libcurl4-openssl-dev git
       # Required for VCPKG
-       apt-get install -y curl zip unzip tar'
+      apt install -y curl zip unzip tar'
   displayName: 'Install required package - apt'
 - script: |
     sudo lxc-attach -n SmpBuildApplication -- bash -c '
