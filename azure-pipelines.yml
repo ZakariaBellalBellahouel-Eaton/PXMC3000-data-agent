@@ -7,8 +7,10 @@
 trigger:
 - master
 
-pool:
-  vmImage: ubuntu-latest
+pool: 
+   name: SMP3050 Build - Hosted
+   demands:
+    - agent.name -equals SMP3050-Zak-PersonalHosted
 
 steps:
 - script: |
