@@ -56,10 +56,10 @@ steps:
       export PXMC_ROOT=/usr/local/share/pxmc3000
       export SOURCE_ROOT=/home/vsts/work/1/s/
       if [ ! -d $VCPKG_ROOT ]; then 
-        sudo install -D -d -o $(whoami) -g $(id -Gn) $VCPKG_ROOT
+        install -D -d -o $(whoami) -g $(id -Gn) $VCPKG_ROOT
       fi
       if [ ! -d $SMPDATAAGENT_ROOT ]; then 
-        sudo install -D -d -o $(whoami) -g $(id -Gn) $SMPDATAAGENT_ROOT
+        install -D -d -o $(whoami) -g $(id -Gn) $SMPDATAAGENT_ROOT
       fi
       cd $PXMC_ROOT
       git clone https://github.com/Microsoft/vcpkg
@@ -71,7 +71,7 @@ steps:
 - script: |
     sudo lxc-attach -n SmpBuildApplication -- bash -c '
       echo installing packages with apt ...
-      sudo apt install -y ninja-build cmake libcurl4-openssl-dev'
+      apt install -y ninja-build cmake libcurl4-openssl-dev'
   displayName: 'Install required package - apt'
 - script: |
     cp /usr/local/share/pxmc3000/azBuildAgent/_work/1/s  /proc/$(sudo lxc-info -n SmpBuildApplication -p -H)/root/usr/local/share/pxmc3000/source
