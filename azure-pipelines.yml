@@ -74,6 +74,9 @@ steps:
     if [ ! -d $SMPDATAAGENT_ROOT ]; then 
       install -D -d -o $(whoami) -g $(id -Gn) $SMPDATAAGENT_ROOT
     fi
+    if [ ! -d $SOURCE_ROOT ]; then 
+      install -D -d -o $(whoami) -g $(id -Gn) $SOURCE_ROOT
+    fi
     # Copy source
     cp -R /usr/local/share/pxmc3000/azBuildAgent/_work/1/s  /proc/$(sudo lxc-info -n SmpBuildApplication -p -H)/root/usr/local/share/pxmc3000/source
   displayName: 'Create Diretories & Copy source to the container'
