@@ -14,12 +14,12 @@ steps:
 - script: |
     # Activate command tracing
     set -o xtrace
-    sudo ls /usr/share/lxc/templates/
     # Install LXC if not installed
     if [[ ! $(sudo dpkg-query -W -f='${package}\n' lxc 2>/dev/null) ]]; then
       sudo apt update
       sudo apt install lxc -y
     fi
+        sudo ls /usr/share/lxc/templates/
     # Create the Build Container - Destroy if exists
     if [[ $(sudo lxc-info -n SmpBuildApplication 2>/dev/null) ]]; then 
       if [[ $(sudo lxc-info SmpBuildApplication -s -H) == "RUNNING" ]]; then 
