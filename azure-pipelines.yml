@@ -7,42 +7,90 @@
 trigger:
 - master
 
-pool:
-  vmImage: ubuntu-latest
+pool: 
+   name: SMP3050 Build - Hosted
+   demands:
+    - agent.name -equals SMP3050-Zak-PersonalHosted
 
 steps:
 - script: |
+    # Activate command tracing
     set -o xtrace
-    export VCPKG_ROOT=/usr/local/share/pxmc3000/vcpkg
-    export SMPDATAAGENT_ROOT=/usr/local/share/pxmc3000/SmpDataAgent
-    export PXMC_ROOT=/usr/local/share/pxmc3000
-    export SOURCE_ROOT=/home/vsts/work/1/s/
-    if [ ! -d $VCPKG_ROOT ]; then 
-      sudo install -D -d -o $(whoami) -g $(id -Gn) $VCPKG_ROOT
+    # Install LXC if not installed
+    if [[ ! $(dpkg-query -W -f='${package}\n' lxc 2>/dev/null) ]]; then
+      apt update
+      apt install lxc -y
     fi
-    if [ ! -d $SMPDATAAGENT_ROOT ]; then 
-      sudo install -D -d -o $(whoami) -g $(id -Gn) $SMPDATAAGENT_ROOT
+    # Create the Build Container - Destroy if exists
+    if [[ $(sudo lxc-info -n SmpBuildApplication 2>/dev/null) ]]; then 
+      if [[ $(sudo lxc-info SmpBuildApplication -s -H) == "RUNNING" ]]; then 
+        lxc-stop SmpBuildApplication
+      fi
+      lxc-destroy SmpBuildApplication
     fi
-    cd $PXMC_ROOT
-    git clone https://github.com/Microsoft/vcpkg
-    cd vcpkg
-    ./bootstrap-vcpkg.sh -disableMetrics
-    ./vcpkg integrate install --vcpkg-root $VCPKG_ROOT
-    ./vcpkg @$SOURCE_ROOT/SmpDataAgent/vcpkg_ref.txt --vcpkg-root $VCPKG_ROOT
-  displayName: 'Prepare the environment & VCPKG packages'
+    lxc-create -n SmpBuildApplication -t debian -- -r bullseye
+    if [[ $(sudo lxc-info SmpBuildApplication -s -H) != "RUNNING" ]]; then 
+      sudo lxc-start SmpBuildApplication
+    fi
+    # Waiting for the network configuration
+    WaitingIpRetries=10
+    WaitingIpSleepDelay=3
+    WaitingIpIterator=1
+    while [ $WaitingIpIterator -lt $WaitingIpRetries ]
+    do
+      if [[ ! $(sudo lxc-info SmpBuildApplication -i -H) ]]; then
+        echo "Ip adress not yet assigned, retry number " $WaitingIpIterator
+        sleep $WaitingIpSleepDelay
+      else
+        echo "IP assigned successfully : " $(sudo lxc-info SmpBuildApplication -i -H)
+        WaitingIpIterator=$WaitingIpRetries
+      fi
+      WaitingIpIterator=$((WaitingIpIterator+1))
+    done
+  displayName: 'Create Build Container'
 - script: |
-    echo installing packages with apt ...
-    sudo apt install -y ninja-build cmake libcurl4-openssl-dev
+    sudo lxc-attach -n SmpBuildApplication -- bash -c '
+      echo installing packages with apt ...
+      apt install -y ninja-build cmake libcurl4-openssl-dev git'
   displayName: 'Install required package - apt'
 - script: |
-    set -o xtrace
-    cmake /home/vsts/work/1/s/  --preset linux-debug -DCMAKE_TOOLCHAIN_FILE:FILEPATH="/usr/local/share/pxmc3000/vcpkg/scripts/buildsystems/vcpkg.cmake"
-    cmake --build /usr/local/share/pxmc3000/SmpDataAgent/bin/linux-debug --config Release
+    sudo lxc-attach -n SmpBuildApplication -- bash -c '
+      set -o xtrace
+      export VCPKG_ROOT=/usr/local/share/pxmc3000/vcpkg
+      export SMPDATAAGENT_ROOT=/usr/local/share/pxmc3000/SmpDataAgent
+      export PXMC_ROOT=/usr/local/share/pxmc3000
+      export SOURCE_ROOT=/home/vsts/work/1/s/
+      if [ ! -d $VCPKG_ROOT ]; then 
+        install -D -d -o $(whoami) -g $(id -Gn) $VCPKG_ROOT
+      fi
+      if [ ! -d $SMPDATAAGENT_ROOT ]; then 
+        install -D -d -o $(whoami) -g $(id -Gn) $SMPDATAAGENT_ROOT
+      fi
+      cd $PXMC_ROOT
+      # TODO : Add the copy certificate to the container and set git to use it
+      git config --global http.sslverify false
+      git clone https://github.com/Microsoft/vcpkg
+      cd vcpkg
+      ./bootstrap-vcpkg.sh -disableMetrics
+      ./vcpkg integrate install --vcpkg-root $VCPKG_ROOT
+      ./vcpkg @$SOURCE_ROOT/SmpDataAgent/vcpkg_ref.txt --vcpkg-root $VCPKG_ROOT'
+  displayName: 'Prepare the environment & VCPKG packages'
+- script: |
+    cp /usr/local/share/pxmc3000/azBuildAgent/_work/1/s  /proc/$(sudo lxc-info -n SmpBuildApplication -p -H)/root/usr/local/share/pxmc3000/source
+  displayName: 'Copy source to the container'
+- script: |
+    sudo lxc-attach -n SmpBuildApplication -- bash -c '
+      set -o xtrace
+      cmake /usr/local/share/pxmc3000/source -G "Ninja"  --preset linux-debug -DCMAKE_TOOLCHAIN_FILE:FILEPATH="/usr/local/share/pxmc3000/vcpkg/scripts/buildsystems/vcpkg.cmake"
+      cmake --build /usr/local/share/pxmc3000/SmpDataAgent/bin/linux-debug --config Debug'
   displayName: 'Cmake build'
 - script: |
-    set -o xtrace
-    cp /usr/local/share/pxmc3000/SmpDataAgent/bin/linux-debug/SmpDataAgent/SmpDataAgent /home/vsts/work/1/a/SmpDataAgent
-  displayName: 'Copy binaries'
+      cp /proc/$(sudo lxc-info -n SmpBuildApplication -p -H)/root/usr/local/share/pxmc3000/SmpDataAgent/bin/linux-debug/SmpDataAgent/SmpDataAgent /usr/local/share/pxmc3000/azBuildAgent/_work/1/a/SmpDataAgent'
+      if [[ $(sudo lxc-info SmpBuildApplication -s -H) == "RUNNING" ]]; then 
+        lxc-stop SmpBuildApplication
+      fi
+      lxc-destroy SmpBuildApplication
+  displayName: 'Copy binaries & Destroy the container'
 - task: PublishBuildArtifacts@1
   inputs:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
