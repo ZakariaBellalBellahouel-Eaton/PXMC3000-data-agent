@@ -51,6 +51,8 @@ steps:
 - script: |
     sudo lxc-attach -n SmpBuildApplication -- bash -c '
       echo installing packages with apt ...
+      apt update -y
+      apt upgrade -y
       apt install -y ninja-build cmake libcurl4-openssl-dev git'
   displayName: 'Install required package - apt'
 - script: |
