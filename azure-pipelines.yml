@@ -28,10 +28,10 @@ steps:
       sudo lxc-destroy SmpBuildApplication
     fi
     # Release key Issue work-arround : Download and load trusted key
-    gpg --no-default-keyring --keyring /var/cache/lxc/debian/archive-key.gpg --list-key /var/cache/lxc/debian/archive-key.gpg
+    sudo gpg --no-default-keyring --keyring /var/cache/lxc/debian/archive-key.gpg --list-key /var/cache/lxc/debian/archive-key.gpg
     wget "https://ftp-master.debian.org/keys/release-11.asc"
-    gpg --no-default-keyring --keyring /var/cache/lxc/debian/archive-key.gpg --import release-11.asc
-    gpg --no-default-keyring --keyring /var/cache/lxc/debian/archive-key.gpg --list-key /var/cache/lxc/debian/archive-key.gpg
+    sudo gpg --no-default-keyring --keyring /var/cache/lxc/debian/archive-key.gpg --import release-11.asc
+    sudo gpg --no-default-keyring --keyring /var/cache/lxc/debian/archive-key.gpg --list-key /var/cache/lxc/debian/archive-key.gpg
     sudo lxc-create -n SmpBuildApplication -t debian -- -r bullseye
     if [[ $(sudo lxc-info SmpBuildApplication -s -H) != "RUNNING" ]]; then 
       sudo lxc-start SmpBuildApplication
