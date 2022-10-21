@@ -14,6 +14,7 @@ steps:
 - script: |
     # Activate command tracing
     set -o xtrace
+    sudo ls /usr/share/lxc/templates/
     # Install LXC if not installed
     if [[ ! $(sudo dpkg-query -W -f='${package}\n' lxc 2>/dev/null) ]]; then
       sudo apt update
