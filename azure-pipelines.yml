@@ -63,22 +63,24 @@ steps:
 - script: |
     # Activate command tracing
     set -o xtrace
+    # Create directories
+    export VCPKG_ROOT=/usr/local/share/pxmc3000/vcpkg
+    export SMPDATAAGENT_ROOT=/usr/local/share/pxmc3000/SmpDataAgent
+    export PXMC_ROOT=/usr/local/share/pxmc3000
+    export SOURCE_ROOT=/root/usr/local/share/pxmc3000/source
+    if [ ! -d $VCPKG_ROOT ]; then 
+      install -D -d -o $(whoami) -g $(id -Gn) $VCPKG_ROOT
+    fi
+    if [ ! -d $SMPDATAAGENT_ROOT ]; then 
+      install -D -d -o $(whoami) -g $(id -Gn) $SMPDATAAGENT_ROOT
+    fi
+    # Copy source
     cp -R /usr/local/share/pxmc3000/azBuildAgent/_work/1/s  /proc/$(sudo lxc-info -n SmpBuildApplication -p -H)/root/usr/local/share/pxmc3000/source
-  displayName: 'Copy source to the container'
+  displayName: 'Create Diretories & Copy source to the container'
 - script: |
     sudo lxc-attach -n SmpBuildApplication -- bash -c '
       # Activate command tracing
       set -o xtrace
-      export VCPKG_ROOT=/usr/local/share/pxmc3000/vcpkg
-      export SMPDATAAGENT_ROOT=/usr/local/share/pxmc3000/SmpDataAgent
-      export PXMC_ROOT=/usr/local/share/pxmc3000
-      export SOURCE_ROOT=/root/usr/local/share/pxmc3000/source
-      if [ ! -d $VCPKG_ROOT ]; then 
-        install -D -d -o $(whoami) -g $(id -Gn) $VCPKG_ROOT
-      fi
-      if [ ! -d $SMPDATAAGENT_ROOT ]; then 
-        install -D -d -o $(whoami) -g $(id -Gn) $SMPDATAAGENT_ROOT
-      fi
       cd $PXMC_ROOT
       # TODO : Add the copy certificate to the container and set git to use it
       git config --global http.sslverify false
