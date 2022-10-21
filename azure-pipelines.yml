@@ -69,7 +69,6 @@ steps:
     export SMPDATAAGENT_ROOT=/usr/local/share/pxmc3000/SmpDataAgent
     export PXMC_ROOT=/usr/local/share/pxmc3000
     export SOURCE_ROOT=/root/usr/local/share/pxmc3000/source
-    export DEFAULT_SOURCE_ROOT=/home/vsts/work/1/s/
     if [ ! -d $VCPKG_ROOT ]; then 
       install -D -d -o $(whoami) -g $(id -Gn) $VCPKG_ROOT
     fi
@@ -81,7 +80,8 @@ steps:
     fi'
     # Copy source
     set -o xtrace
-    sudo cp -R $DEFAULT_SOURCE_ROOT  /proc/$(sudo lxc-info -n SmpBuildApplication -p -H)/root/usr/local/share/pxmc3000/source
+    echo $Build.Repository.LocalPath  "-" $ Build.SourcesDirectory
+    sudo cp -R $Build.SourcesDirectory  /proc/$(sudo lxc-info -n SmpBuildApplication -p -H)/root/usr/local/share/pxmc3000/source
   displayName: 'Create Diretories & Copy source to the container'
 - script: |
     sudo lxc-attach -n SmpBuildApplication -- bash -c '
