@@ -63,7 +63,7 @@ steps:
 - script: |
     # Activate command tracing
     set -o xtrace
-    cp /usr/local/share/pxmc3000/azBuildAgent/_work/1/s  /proc/$(sudo lxc-info -n SmpBuildApplication -p -H)/root/usr/local/share/pxmc3000/source
+    cp -R /usr/local/share/pxmc3000/azBuildAgent/_work/1/s  /proc/$(sudo lxc-info -n SmpBuildApplication -p -H)/root/usr/local/share/pxmc3000/source
   displayName: 'Copy source to the container'
 - script: |
     sudo lxc-attach -n SmpBuildApplication -- bash -c '
