@@ -18,7 +18,7 @@ variables:
 - name: PXMC_ROOT
   value: /usr/local/share/pxmc3000
 - name: SOURCE_ROOT
-  value: /root/usr/local/share/pxmc3000/source
+  value: /usr/local/share/pxmc3000/source
 
 steps:
 - script: |
