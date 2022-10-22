@@ -75,14 +75,14 @@ steps:
     # Activate command tracing
     set -o xtrace
     # Create directories
-    if [ ! -d $VCPKG_ROOT ]; then 
-      install -D -d -o $(whoami) -g $(id -Gn) $VCPKG_ROOT
+    if [ ! -d $(VCPKG_ROOT) ]; then 
+      install -D -d -o $(whoami) -g $(id -Gn) $(VCPKG_ROOT)
     fi
-    if [ ! -d $SMPDATAAGENT_ROOT ]; then 
-      install -D -d -o $(whoami) -g $(id -Gn) $SMPDATAAGENT_ROOT
+    if [ ! -d $(SMPDATAAGENT_ROOT) ]; then 
+      install -D -d -o $(whoami) -g $(id -Gn) $(SMPDATAAGENT_ROOT)
     fi
-    if [ ! -d $SOURCE_ROOT ]; then 
-      install -D -d -o $(whoami) -g $(id -Gn) $SOURCE_ROOT
+    if [ ! -d $(SOURCE_ROOT) ]; then 
+      install -D -d -o $(whoami) -g $(id -Gn) $(SOURCE_ROOT)
     fi'
     # Copy source
     set -o xtrace
@@ -92,14 +92,14 @@ steps:
     sudo lxc-attach -n SmpBuildApplication -- bash -c '
       # Activate command tracing
       set -o xtrace
-      cd $PXMC_ROOT
+      cd $(PXMC_ROOT)
       # TODO : Add the copy certificate to the container and set git to use it
       git config --global http.sslverify false
       git clone https://github.com/Microsoft/vcpkg
       cd vcpkg
       ./bootstrap-vcpkg.sh -disableMetrics
-      ./vcpkg integrate install --vcpkg-root $VCPKG_ROOT
-      ./vcpkg @$SOURCE_ROOT/SmpDataAgent/vcpkg_ref.txt --vcpkg-root $VCPKG_ROOT'
+      ./vcpkg integrate install --vcpkg-root $(VCPKG_ROOT)
+      ./vcpkg @$(SOURCE_ROOT)/SmpDataAgent/vcpkg_ref.txt --vcpkg-root $(VCPKG_ROOT)'
   displayName: 'Prepare the environment & VCPKG packages'
 - script: |
     sudo lxc-attach -n SmpBuildApplication -- bash -c '
