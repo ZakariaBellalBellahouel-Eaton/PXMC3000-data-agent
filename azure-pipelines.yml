@@ -10,6 +10,16 @@ trigger:
 pool:
   vmImage: ubuntu-latest
 
+variables:
+- name: VCPKG_ROOT
+  value: /usr/local/share/pxmc3000/vcpkg
+- name: SMPDATAAGENT_ROOT
+  value: /usr/local/share/pxmc3000/SmpDataAgent
+- name: PXMC_ROOT
+  value: /usr/local/share/pxmc3000
+- name: SOURCE_ROOT
+  value: /root/usr/local/share/pxmc3000/source
+
 steps:
 - script: |
     # Activate command tracing
@@ -65,10 +75,6 @@ steps:
     # Activate command tracing
     set -o xtrace
     # Create directories
-    export VCPKG_ROOT=/usr/local/share/pxmc3000/vcpkg
-    export SMPDATAAGENT_ROOT=/usr/local/share/pxmc3000/SmpDataAgent
-    export PXMC_ROOT=/usr/local/share/pxmc3000
-    export SOURCE_ROOT=/root/usr/local/share/pxmc3000/source
     if [ ! -d $VCPKG_ROOT ]; then 
       install -D -d -o $(whoami) -g $(id -Gn) $VCPKG_ROOT
     fi
