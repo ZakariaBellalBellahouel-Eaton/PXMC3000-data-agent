@@ -86,6 +86,7 @@ steps:
     fi'
     # Copy source
     set -o xtrace
+    ls $(Build.SourcesDirectory)
     sudo cp -R $(Build.SourcesDirectory)  /proc/$(sudo lxc-info -n SmpBuildApplication -p -H)/root/usr/local/share/pxmc3000/source
   displayName: 'Create Diretories & Copy source to the container'
 - script: |
@@ -99,8 +100,9 @@ steps:
       cd vcpkg
       ./bootstrap-vcpkg.sh -disableMetrics
       ./vcpkg integrate install --vcpkg-root $(VCPKG_ROOT)
-      /usr/local/share/pxmc3000/source/SmpDataAgent/
-      /usr/local/share/pxmc3000/source/SmpDataAgent/SmpDataAgent
+      ls /usr/local/share/pxmc3000/source
+      ls /usr/local/share/pxmc3000/source/SmpDataAgent/
+      ls /usr/local/share/pxmc3000/source/SmpDataAgent/SmpDataAgent
       ./vcpkg @$(SOURCE_ROOT)/SmpDataAgent/vcpkg_ref.txt --vcpkg-root $(VCPKG_ROOT)'
   displayName: 'Prepare the environment & VCPKG packages'
 - script: |
