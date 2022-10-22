@@ -87,7 +87,7 @@ steps:
     # Copy source
     set -o xtrace
     ls $(Build.SourcesDirectory)
-    sudo cp -R $(Build.SourcesDirectory)  /proc/$(sudo lxc-info -n SmpBuildApplication -p -H)/root/usr/local/share/pxmc3000/source
+    sudo cp -R $(Build.SourcesDirectory)/*  /proc/$(sudo lxc-info -n SmpBuildApplication -p -H)/root/usr/local/share/pxmc3000/source
   displayName: 'Create Diretories & Copy source to the container'
 - script: |
     sudo lxc-attach -n SmpBuildApplication -- bash -c '
