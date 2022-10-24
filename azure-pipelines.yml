@@ -99,7 +99,6 @@ steps:
       set -o xtrace
       cd $(PXMC_ROOT)
       # TODO : Add the copy certificate to the container and set git to use it
-      git config --global http.sslverify false
       git clone https://github.com/Microsoft/vcpkg
       cd vcpkg
       ./bootstrap-vcpkg.sh -disableMetrics
