@@ -72,8 +72,16 @@ steps:
       apt upgrade -y
       # Required for build
       apt install -y ninja-build cmake libcurl4-openssl-dev git
-      # Required for VCPKG
-      apt install -y curl zip unzip tar build-essential pkg-config'
+      # Required for VCPKG & Cmake
+      apt install -y curl zip unzip tar build-essential pkg-config libssl-dev
+      # Install Cmake version 3.24.2 since the last version of apt is 3.18 (doesn't support preset)
+      cd SOURCE_ROOT
+      curl -OL https://github.com/Kitware/CMake/releases/download/v3.24.2/cmake-3.24.2.tar.gz
+      tar -zxvf cmake-3.24.2.tar.gz
+      cd cmake-3.24.2
+      ./bootstrap
+      make
+      make install'
   displayName: 'Install required package - apt'
 - script: |
     sudo lxc-attach -n SmpBuildApplication -- bash -c '
@@ -108,11 +116,8 @@ steps:
 - script: |
     sudo lxc-attach -n SmpBuildApplication -- bash -c '
       set -o xtrace
-      ls /usr/local/share/pxmc3000/source
-      ls /usr/local/share/pxmc3000/vcpkg/downloads/
-      ls /usr/local/share/pxmc3000/vcpkg/downloads/cmake-3.24.0-linux-x86_64
-      ./usr/local/share/pxmc3000/vcpkg/downloads/cmake-3.24.0-linux-x86_64/cmake --preset linux-debug -DCMAKE_TOOLCHAIN_FILE:FILEPATH="/usr/local/share/pxmc3000/vcpkg/scripts/buildsystems/vcpkg.cmake" /usr/local/share/pxmc3000/source
-      ./usr/local/share/pxmc3000/vcpkg/downloads/cmake-3.24.0-linux-x86_64/cmake --build /usr/local/share/pxmc3000/SmpDataAgent/bin/linux-debug --config Release'
+      /usr/local/bin/cmake --preset linux-debug -DCMAKE_TOOLCHAIN_FILE:FILEPATH="/usr/local/share/pxmc3000/vcpkg/scripts/buildsystems/vcpkg.cmake" /usr/local/share/pxmc3000/source
+      /usr/local/bin/cmake --build /usr/local/share/pxmc3000/SmpDataAgent/bin/linux-debug --config Release'
   displayName: 'Cmake build'
 - script: |
       # Activate command tracing
