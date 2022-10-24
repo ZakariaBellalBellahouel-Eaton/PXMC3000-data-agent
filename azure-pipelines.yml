@@ -98,7 +98,8 @@ steps:
       curl -OL https://github.com/Kitware/CMake/releases/download/v3.24.2/cmake-3.24.2-linux-x86_64.tar.gz
       tar -zxvf cmake-3.24.2-linux-x86_64.tar.gz
       cd cmake-3.24.2-linux-x86_64
-      ln /usr/local/share/pxmc3000/source/cmake-3.24.2-linux-x86_64/bin/cmake /usr/bin/cmake'
+      cp -R cmake-3.24.2-linux-x86_64/bin/* /usr/bin/
+      cp -R cmake-3.24.2-linux-x86_64/share/* /usr/share/'
   displayName: 'Install required package - apt'
 - script: |
     sudo lxc-attach -n SmpBuildApplication -- bash -c '
