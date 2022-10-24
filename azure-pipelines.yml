@@ -67,6 +67,24 @@ steps:
     sudo lxc-attach -n SmpBuildApplication -- bash -c '
       # Activate command tracing
       set -o xtrace
+      # Create directories
+      if [ ! -d $(VCPKG_ROOT) ]; then 
+        install -D -d -o $(whoami) -g $(id -Gn) $(VCPKG_ROOT)
+      fi
+      if [ ! -d $(SMPDATAAGENT_ROOT) ]; then 
+        install -D -d -o $(whoami) -g $(id -Gn) $(SMPDATAAGENT_ROOT)
+      fi
+      if [ ! -d $(SOURCE_ROOT) ]; then 
+        install -D -d -o $(whoami) -g $(id -Gn) $(SOURCE_ROOT)
+      fi'
+    # Copy source
+    set -o xtrace
+    sudo cp -R $(Build.SourcesDirectory)/*  /proc/$(sudo lxc-info -n SmpBuildApplication -p -H)/root/usr/local/share/pxmc3000/source
+  displayName: 'Create Diretories & Copy source to the container'
+- script: |
+    sudo lxc-attach -n SmpBuildApplication -- bash -c '
+      # Activate command tracing
+      set -o xtrace
       echo installing packages with apt ...
       apt update -y
       apt upgrade -y
@@ -81,24 +99,6 @@ steps:
       cd cmake-3.24.2-linux-x86_64
       ln /usr/local/share/pxmc3000/source/cmake-3.24.2-linux-x86_64/bin/cmake /usr/bin/cmake'
   displayName: 'Install required package - apt'
-- script: |
-    sudo lxc-attach -n SmpBuildApplication -- bash -c '
-    # Activate command tracing
-    set -o xtrace
-    # Create directories
-    if [ ! -d $(VCPKG_ROOT) ]; then 
-      install -D -d -o $(whoami) -g $(id -Gn) $(VCPKG_ROOT)
-    fi
-    if [ ! -d $(SMPDATAAGENT_ROOT) ]; then 
-      install -D -d -o $(whoami) -g $(id -Gn) $(SMPDATAAGENT_ROOT)
-    fi
-    if [ ! -d $(SOURCE_ROOT) ]; then 
-      install -D -d -o $(whoami) -g $(id -Gn) $(SOURCE_ROOT)
-    fi'
-    # Copy source
-    set -o xtrace
-    sudo cp -R $(Build.SourcesDirectory)/*  /proc/$(sudo lxc-info -n SmpBuildApplication -p -H)/root/usr/local/share/pxmc3000/source
-  displayName: 'Create Diretories & Copy source to the container'
 - script: |
     sudo lxc-attach -n SmpBuildApplication -- bash -c '
       # Activate command tracing
@@ -120,7 +120,7 @@ steps:
 - script: |
       # Activate command tracing
       set -o xtrace
-      cp /proc/$(sudo lxc-info -n SmpBuildApplication -p -H)/root/usr/local/share/pxmc3000/SmpDataAgent/bin/linux-debug/SmpDataAgent/SmpDataAgent /usr/local/share/pxmc3000/azBuildAgent/_work/1/a/SmpDataAgent'
+      cp /proc/$(sudo lxc-info -n SmpBuildApplication -p -H)/root/usr/local/share/pxmc3000/SmpDataAgent/bin/linux-debug/SmpDataAgent/SmpDataAgent /usr/local/share/pxmc3000/azBuildAgent/_work/1/a/SmpDataAgent
       if [[ $(sudo lxc-info SmpBuildApplication -s -H) == "RUNNING" ]]; then 
         lxc-stop SmpBuildApplication
       fi
