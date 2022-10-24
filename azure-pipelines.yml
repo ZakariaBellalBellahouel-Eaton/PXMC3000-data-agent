@@ -40,6 +40,10 @@ steps:
     set -o xtrace
     cp /usr/local/share/pxmc3000/SmpDataAgent/bin/linux-debug/SmpDataAgent/SmpDataAgent /home/vsts/work/1/a/SmpDataAgent
   displayName: 'Copy binaries'
+- task: SynopsysDetectTask@7
+  inputs:
+    BlackDuckService: 'PXMC Blackduck'
+    DetectVersion: 'latest'
 - task: PublishBuildArtifacts@1
   inputs:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
