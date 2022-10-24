@@ -85,6 +85,7 @@ steps:
 - task: DownloadSecureFile@1
   inputs:
     secureFile: 'Eaton_root_ca_2.crt'
+  displayName: 'Get Eaton Certificate and install it'
 - script: |
     sudo lxc-attach -n SmpBuildApplication -- bash -c '
       # Activate command tracing
