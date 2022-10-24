@@ -1,121 +1,45 @@
 # Starter pipeline
-
 # Start with a minimal pipeline that you can customize to build and deploy your code.
 # Add steps that build, run tests, deploy, and more:
 # https://aka.ms/yaml
-
 trigger:
 - master
-
 pool:
   vmImage: ubuntu-latest
-
-variables:
-- name: VCPKG_ROOT
-  value: /usr/local/share/pxmc3000/vcpkg
-- name: SMPDATAAGENT_ROOT
-  value: /usr/local/share/pxmc3000/SmpDataAgent
-- name: PXMC_ROOT
-  value: /usr/local/share/pxmc3000
-- name: SOURCE_ROOT
-  value: /usr/local/share/pxmc3000/source
-
 steps:
 - script: |
-    # Activate command tracing
     set -o xtrace
-    # Install LXC if not installed
-    if [[ ! $(sudo dpkg-query -W -f='${package}\n' lxc 2>/dev/null) ]]; then
-      sudo apt update
-      sudo apt install lxc -y
+    export VCPKG_ROOT=/usr/local/share/pxmc3000/vcpkg
+    export SMPDATAAGENT_ROOT=/usr/local/share/pxmc3000/SmpDataAgent
+    export PXMC_ROOT=/usr/local/share/pxmc3000
+    export SOURCE_ROOT=/home/vsts/work/1/s/
+    if [ ! -d $VCPKG_ROOT ]; then 
+      sudo install -D -d -o $(whoami) -g $(id -Gn) $VCPKG_ROOT
     fi
-    # Create the Build Container - Destroy if exists
-    if [[ $(sudo lxc-info -n SmpBuildApplication 2>/dev/null) ]]; then 
-      if [[ $(sudo lxc-info SmpBuildApplication -s -H) == "RUNNING" ]]; then 
-        sudo lxc-stop SmpBuildApplication
-      fi
-      sudo lxc-destroy SmpBuildApplication
+    if [ ! -d $SMPDATAAGENT_ROOT ]; then 
+      sudo install -D -d -o $(whoami) -g $(id -Gn) $SMPDATAAGENT_ROOT
     fi
-    # Release key Issue work-arround : Download and load trusted key
-    sudo lxc-create -n SmpBuildApplication -t download -- -d debian -r bullseye -a amd64
-    if [[ $(sudo lxc-info SmpBuildApplication -s -H) != "RUNNING" ]]; then 
-      sudo lxc-start SmpBuildApplication
-    fi
-    # Waiting for the network configuration
-    WaitingIpRetries=10
-    WaitingIpSleepDelay=3
-    WaitingIpIterator=1
-    while [ $WaitingIpIterator -lt $WaitingIpRetries ]
-    do
-      if [[ ! $(sudo lxc-info SmpBuildApplication -i -H) ]]; then
-        echo "Ip adress not yet assigned, retry number " $WaitingIpIterator
-        sleep $WaitingIpSleepDelay
-      else
-        echo "IP assigned successfully : " $(sudo lxc-info SmpBuildApplication -i -H)
-        WaitingIpIterator=$WaitingIpRetries
-      fi
-      WaitingIpIterator=$((WaitingIpIterator+1))
-    done
-  displayName: 'Create Build Container'
-- script: |
-    sudo lxc-attach -n SmpBuildApplication -- bash -c '
-      # Activate command tracing
-      set -o xtrace
-      echo installing packages with apt ...
-      apt update -y
-      apt upgrade -y
-      # Required for build
-      apt install -y ninja-build cmake libcurl4-openssl-dev git
-      # Required for VCPKG
-      apt install -y curl zip unzip tar build-essential pkg-config'
-  displayName: 'Install required package - apt'
-- script: |
-    sudo lxc-attach -n SmpBuildApplication -- bash -c '
-    # Activate command tracing
-    set -o xtrace
-    # Create directories
-    if [ ! -d $(VCPKG_ROOT) ]; then 
-      install -D -d -o $(whoami) -g $(id -Gn) $(VCPKG_ROOT)
-    fi
-    if [ ! -d $(SMPDATAAGENT_ROOT) ]; then 
-      install -D -d -o $(whoami) -g $(id -Gn) $(SMPDATAAGENT_ROOT)
-    fi
-    if [ ! -d $(SOURCE_ROOT) ]; then 
-      install -D -d -o $(whoami) -g $(id -Gn) $(SOURCE_ROOT)
-    fi'
-    # Copy source
-    set -o xtrace
-    sudo cp -R $(Build.SourcesDirectory)/*  /proc/$(sudo lxc-info -n SmpBuildApplication -p -H)/root/usr/local/share/pxmc3000/source
-  displayName: 'Create Diretories & Copy source to the container'
-- script: |
-    sudo lxc-attach -n SmpBuildApplication -- bash -c '
-      # Activate command tracing
-      set -o xtrace
-      cd $(PXMC_ROOT)
-      # TODO : Add the copy certificate to the container and set git to use it
-      git config --global http.sslverify false
-      git clone https://github.com/Microsoft/vcpkg
-      cd vcpkg
-      ./bootstrap-vcpkg.sh -disableMetrics
-      ./vcpkg @$(SOURCE_ROOT)/SmpDataAgent/vcpkg_ref.txt --vcpkg-root $(VCPKG_ROOT)
-      #./vcpkg integrate install --vcpkg-root $(VCPKG_ROOT)'
+    cd $PXMC_ROOT
+    git clone https://github.com/Microsoft/vcpkg
+    cd vcpkg
+    ./bootstrap-vcpkg.sh -disableMetrics
+    ./vcpkg integrate install --vcpkg-root $VCPKG_ROOT
+    ./vcpkg @$SOURCE_ROOT/SmpDataAgent/vcpkg_ref.txt --vcpkg-root $VCPKG_ROOT
   displayName: 'Prepare the environment & VCPKG packages'
 - script: |
-    sudo lxc-attach -n SmpBuildApplication -- bash -c '
-      set -o xtrace
-      ls /usr/local/share/pxmc3000/source
-      cmake --preset linux-debug -DCMAKE_TOOLCHAIN_FILE:FILEPATH="/usr/local/share/pxmc3000/vcpkg/scripts/buildsystems/vcpkg.cmake" /usr/local/share/pxmc3000/source
-      cmake --build /usr/local/share/pxmc3000/source/SmpDataAgent/bin/linux-debug --config Release'
+    echo installing packages with apt ...
+    sudo apt install -y ninja-build cmake libcurl4-openssl-dev
+  displayName: 'Install required package - apt'
+- script: |
+    set -o xtrace
+    cmake /home/vsts/work/1/s/ -G "Ninja"  --preset linux-debug -DCMAKE_TOOLCHAIN_FILE:FILEPATH="/usr/local/share/pxmc3000/vcpkg/scripts/buildsystems/vcpkg.cmake"
+    cmake --build /usr/local/share/pxmc3000/SmpDataAgent/bin/linux-debug --config Release
+    cmake --build /usr/local/share/pxmc3000/SmpDataAgent/bin/linux-debug --config Debug
   displayName: 'Cmake build'
 - script: |
-      # Activate command tracing
-      set -o xtrace
-      cp /proc/$(sudo lxc-info -n SmpBuildApplication -p -H)/root/usr/local/share/pxmc3000/SmpDataAgent/bin/linux-debug/SmpDataAgent/SmpDataAgent /usr/local/share/pxmc3000/azBuildAgent/_work/1/a/SmpDataAgent'
-      if [[ $(sudo lxc-info SmpBuildApplication -s -H) == "RUNNING" ]]; then 
-        lxc-stop SmpBuildApplication
-      fi
-      lxc-destroy SmpBuildApplication
-  displayName: 'Copy binaries & Destroy the container'
+    set -o xtrace
+    cp /usr/local/share/pxmc3000/SmpDataAgent/bin/linux-debug/SmpDataAgent/SmpDataAgent /home/vsts/work/1/a/SmpDataAgent
+  displayName: 'Copy binaries'
 - task: PublishBuildArtifacts@1
   inputs:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
