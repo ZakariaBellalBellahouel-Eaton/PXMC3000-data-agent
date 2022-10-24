@@ -104,7 +104,7 @@ steps:
     sudo lxc-attach -n SmpBuildApplication -- bash -c '
       set -o xtrace
       ls /usr/local/share/pxmc3000/source
-      cmake /usr/local/share/pxmc3000/source  --preset linux-debug -DCMAKE_TOOLCHAIN_FILE:FILEPATH="/usr/local/share/pxmc3000/vcpkg/scripts/buildsystems/vcpkg.cmake"
+      cmake --preset linux-debug -DCMAKE_TOOLCHAIN_FILE:FILEPATH="/usr/local/share/pxmc3000/vcpkg/scripts/buildsystems/vcpkg.cmake" /usr/local/share/pxmc3000/source
       cmake --build /usr/local/share/pxmc3000/SmpDataAgent/bin/linux-debug --config Release'
   displayName: 'Cmake build'
 - script: |
