@@ -98,8 +98,8 @@ steps:
       git clone https://github.com/Microsoft/vcpkg
       cd vcpkg
       ./bootstrap-vcpkg.sh -disableMetrics
-      ./vcpkg integrate install --vcpkg-root $(VCPKG_ROOT)
       ./vcpkg @$(SOURCE_ROOT)/SmpDataAgent/vcpkg_ref.txt --vcpkg-root $(VCPKG_ROOT)'
+      ./vcpkg integrate install --vcpkg-root $(VCPKG_ROOT)
   displayName: 'Prepare the environment & VCPKG packages'
 - script: |
     sudo lxc-attach -n SmpBuildApplication -- bash -c '
