@@ -38,8 +38,8 @@ int main()
 	// SMP IP adress
 	const string stringSmpBasicUri = "https://10.130.129.17/";
 	// TO by encrypted in param file
-	const string username = "security";
-	const string password = "Security8*";
+	const string username = "admin";
+	const string password = "Security.4u";
 	// Authorization header key
 	const string autorizationHeader = "Authorization: Basic " + cppcodec::base64_rfc4648::encode(username + ":" + password);
 	//SMP entity
