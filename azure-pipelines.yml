@@ -8,6 +8,7 @@ pool:
   vmImage: ubuntu-latest
 steps:
 - script: |
+    echo "test"
     set -o xtrace
     export VCPKG_ROOT=/usr/local/share/pxmc3000/vcpkg
     export SMPDATAAGENT_ROOT=/usr/local/share/pxmc3000/SmpDataAgent
