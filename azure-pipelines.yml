@@ -16,8 +16,6 @@ variables:
   value: /usr/local/share/pxmc3000
 - name: SOURCE_ROOT
   value: /usr/local/share/pxmc3000/source
-- name: DETECT_PROJECT_NAME
-  value: = PXMC-EA
 steps:
 - task: DownloadSecureFile@1 
   name: EatonCertificate
@@ -127,6 +125,11 @@ steps:
       fi
       sudo lxc-destroy SmpBuildApplication
   displayName: 'Copy binaries & Destroy the container'
+- task: SynopsysDetectTask@7
+  inputs:
+    BlackDuckService: 'PXMC Blackduck'
+    DetectVersion: 'latest'
+    DetectProjectName: 'PXMC-EA'
 - task: PublishBuildArtifacts@1
   inputs:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
