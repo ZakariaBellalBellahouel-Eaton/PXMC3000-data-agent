@@ -16,7 +16,7 @@ variables:
   value: /usr/local/share/pxmc3000
 - name: SOURCE_ROOT
   value: /usr/local/share/pxmc3000/source
-
+- name: DETECT_PROJECT_NAME = PXMC-EA
 steps:
 - task: DownloadSecureFile@1 
   name: EatonCertificate
