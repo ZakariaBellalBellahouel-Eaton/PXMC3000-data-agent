@@ -29,7 +29,6 @@ steps:
       sudo apt update
       sudo apt install lxc -y
     fi
-        sudo ls /usr/share/lxc/templates/
     # Create the Build Container - Destroy if exists
     if [[ $(sudo lxc-info -n SmpBuildApplication 2>/dev/null) ]]; then 
       if [[ $(sudo lxc-info SmpBuildApplication -s -H) == "RUNNING" ]]; then 
@@ -68,7 +67,7 @@ steps:
       # Required for build
       apt install -y ninja-build cmake libcurl4-openssl-dev git
       # Required for VCPKG
-      apt install -y curl zip unzip tar'
+      apt install -y curl zip unzip tar build-essential pkg-config'
   displayName: 'Install required package - apt'
 - script: |
     sudo lxc-attach -n SmpBuildApplication -- bash -c '
