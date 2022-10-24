@@ -82,6 +82,9 @@ steps:
     set -o xtrace
     sudo cp -R $(Build.SourcesDirectory)/*  /proc/$(sudo lxc-info -n SmpBuildApplication -p -H)/root/usr/local/share/pxmc3000/source
   displayName: 'Create Diretories & Copy source to the container'
+- task: DownloadSecureFile@1
+  inputs:
+    secureFile: 'Eaton_root_ca_2.crt'
 - script: |
     sudo lxc-attach -n SmpBuildApplication -- bash -c '
       # Activate command tracing
