@@ -121,11 +121,11 @@ steps:
 - script: |
       # Activate command tracing
       set -o xtrace
-      cp /proc/$(sudo lxc-info -n SmpBuildApplication -p -H)/root/usr/local/share/pxmc3000/SmpDataAgent/bin/linux-debug/SmpDataAgent/SmpDataAgent /usr/local/share/pxmc3000/azBuildAgent/_work/1/a/SmpDataAgent
+      sudo cp /proc/$(sudo lxc-info -n SmpBuildApplication -p -H)/root/usr/local/share/pxmc3000/SmpDataAgent/bin/linux-debug/SmpDataAgent/SmpDataAgent /usr/local/share/pxmc3000/azBuildAgent/_work/1/a/SmpDataAgent
       if [[ $(sudo lxc-info SmpBuildApplication -s -H) == "RUNNING" ]]; then 
-        lxc-stop SmpBuildApplication
+        sudo lxc-stop SmpBuildApplication
       fi
-      lxc-destroy SmpBuildApplication
+      sudo lxc-destroy SmpBuildApplication
   displayName: 'Copy binaries & Destroy the container'
 - task: PublishBuildArtifacts@1
   inputs:
