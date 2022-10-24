@@ -105,7 +105,7 @@ steps:
       set -o xtrace
       ls /usr/local/share/pxmc3000/source
       cmake --preset linux-debug -DCMAKE_TOOLCHAIN_FILE:FILEPATH="/usr/local/share/pxmc3000/vcpkg/scripts/buildsystems/vcpkg.cmake" /usr/local/share/pxmc3000/source
-      cmake --build /usr/local/share/pxmc3000/SmpDataAgent/bin/linux-debug --config Release'
+      cmake --build /usr/local/share/pxmc3000/source/SmpDataAgent/bin/linux-debug --config Release'
   displayName: 'Cmake build'
 - script: |
       # Activate command tracing
