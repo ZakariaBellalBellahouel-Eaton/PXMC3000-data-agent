@@ -74,7 +74,7 @@ steps:
       apt install -y ninja-build cmake libcurl4-openssl-dev git
       # Required for VCPKG & Cmake
       apt install -y curl zip unzip tar build-essential pkg-config libssl-dev
-      # Install Cmake version 3.24.2 since the last version of apt is 3.18 (doesn't support preset)
+      # Install Cmake version 3.24.2 since the last version of apt is 3.18 (doesn t support preset)
       cd SOURCE_ROOT
       curl -OL https://github.com/Kitware/CMake/releases/download/v3.24.2/cmake-3.24.2.tar.gz
       tar -zxvf cmake-3.24.2.tar.gz
