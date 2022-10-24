@@ -98,15 +98,13 @@ steps:
       cd vcpkg
       ./bootstrap-vcpkg.sh -disableMetrics
       ./vcpkg @$(SOURCE_ROOT)/SmpDataAgent/vcpkg_ref.txt --vcpkg-root $(VCPKG_ROOT)
-      cat /usr/local/share/pxmc3000/vcpkg/buildtrees/detect_compiler/config-x64-linux-rel-out.log
-      cat /usr/local/share/pxmc3000/vcpkg/buildtrees/detect_compiler/config-x64-linux-rel-err.log
       #./vcpkg integrate install --vcpkg-root $(VCPKG_ROOT)'
   displayName: 'Prepare the environment & VCPKG packages'
 - script: |
     sudo lxc-attach -n SmpBuildApplication -- bash -c '
       set -o xtrace
-      cmake /usr/local/share/pxmc3000/source -G "Ninja"  --preset linux-debug -DCMAKE_TOOLCHAIN_FILE:FILEPATH="/usr/local/share/pxmc3000/vcpkg/scripts/buildsystems/vcpkg.cmake"
-      cmake --build /usr/local/share/pxmc3000/SmpDataAgent/bin/linux-debug --config Debug'
+      sudo cmake /usr/local/share/pxmc3000/source  --preset linux-debug -DCMAKE_TOOLCHAIN_FILE:FILEPATH="/usr/local/share/pxmc3000/vcpkg/scripts/buildsystems/vcpkg.cmake"
+      sudo cmake --build /usr/local/share/pxmc3000/SmpDataAgent/bin/linux-debug --config Release'
   displayName: 'Cmake build'
 - script: |
       # Activate command tracing
