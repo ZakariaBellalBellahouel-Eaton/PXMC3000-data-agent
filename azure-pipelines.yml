@@ -6,6 +6,7 @@ trigger:
 - master
 pool:
   vmImage: ubuntu-latest
+
 variables:
 - name: VCPKG_ROOT
   value: /usr/local/share/pxmc3000/vcpkg
@@ -15,7 +16,17 @@ variables:
   value: /usr/local/share/pxmc3000
 - name: SOURCE_ROOT
   value: /usr/local/share/pxmc3000/source
+
 steps:
+- task: DownloadSecureFile@1
+  name: EatonCertificate
+  inputs:
+    secureFile: 'Eaton_root_ca_2.crt'
+  displayName: 'Get Eaton Certificate'
+- script: |
+    sudo cp $(EatonCertificate.secureFilePath) /usr/local/share/ca-certificates
+    sudo update-ca-certificates
+  displayName: 'Install Eaton Certificate'
 - script: |
     # Activate command tracing
     set -o xtrace
@@ -82,10 +93,6 @@ steps:
     set -o xtrace
     sudo cp -R $(Build.SourcesDirectory)/*  /proc/$(sudo lxc-info -n SmpBuildApplication -p -H)/root/usr/local/share/pxmc3000/source
   displayName: 'Create Diretories & Copy source to the container'
-- task: DownloadSecureFile@1
-  inputs:
-    secureFile: 'Eaton_root_ca_2.crt'
-  displayName: 'Get Eaton Certificate and install it'
 - script: |
     sudo lxc-attach -n SmpBuildApplication -- bash -c '
       # Activate command tracing
