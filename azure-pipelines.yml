@@ -119,17 +119,12 @@ steps:
 - script: |
       # Activate command tracing
       set -o xtrace
-      sudo cp /proc/$(sudo lxc-info -n SmpBuildApplication -p -H)/root/usr/local/share/pxmc3000/SmpDataAgent/bin/linux-debug/SmpDataAgent/SmpDataAgent /usr/local/share/pxmc3000/azBuildAgent/_work/1/a/SmpDataAgent
+      sudo cp /proc/$(sudo lxc-info -n SmpBuildApplication -p -H)/root/usr/local/share/pxmc3000/SmpDataAgent/bin/linux-debug/SmpDataAgent/SmpDataAgent $(Build.ArtifactStagingDirectory)/SmpDataAgent
       if [[ $(sudo lxc-info SmpBuildApplication -s -H) == "RUNNING" ]]; then 
         sudo lxc-stop SmpBuildApplication
       fi
       sudo lxc-destroy SmpBuildApplication
   displayName: 'Copy binaries & Destroy the container'
-- task: SynopsysDetectTask@7
-  inputs:
-    BlackDuckService: 'PXMC Blackduck'
-    DetectVersion: 'latest'
-    DetectProjectName: 'PXMC-EA'
 - task: PublishBuildArtifacts@1
   inputs:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
