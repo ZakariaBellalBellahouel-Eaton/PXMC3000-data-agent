@@ -44,6 +44,15 @@ steps:
 - task: SynopsysDetectTask@7
   inputs:
     BlackDuckService: 'PXMC Blackduck'
+- task: SynopsysDetectTask@7
+  inputs:
+    BlackDuckService: 'PXMC Blackduck'
+    DetectArguments: |
+      --blackduck.url=https://eaton.app.blackduck.com
+      --blackduck.api.token=YTAxNzc1ZjktNzFhNi00ZjRjLTlmMTYtNGM0YjcyODUwM2FkOmVmMDJkZDhiLTk1YmEtNDk1ZS1hZGEzLTU1NDRkM2NiN2NiNg==
+      --blackduck.proxy.host http://proxy.etn.com
+      --blackduck.proxy.port 8080
+      --detect.project.name 'PXMC EA'
     DetectVersion: 'latest'
 - task: PublishBuildArtifacts@1
   inputs:
