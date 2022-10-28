@@ -1,5 +1,5 @@
 ﻿// Smp3050RestApiRequester.cpp : Defines the entry point for the application.
-
+// POE
 #include "SmpDataAgent.h"
 
 using namespace std;
