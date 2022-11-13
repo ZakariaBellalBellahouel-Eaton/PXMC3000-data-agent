@@ -28,6 +28,10 @@ steps:
 - script: |
     # Activate command tracing
     set -o xtrace
+    export no_proxy=localhost, 127.0.0.1
+    export https_proxy=http://proxy.etn.com:8080
+    export http_proxy=http://proxy.etn.com:8080
+
     # Install LXC if not installed
     if [[ ! $(sudo dpkg-query -W -f='${package}\n' lxc 2>/dev/null) ]]; then
       sudo apt update
