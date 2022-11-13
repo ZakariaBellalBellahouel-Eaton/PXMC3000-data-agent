@@ -28,6 +28,7 @@ steps:
 - script: |
     # Activate command tracing
     set -o xtrace
+    # Set proxy
     export no_proxy=localhost, 127.0.0.1
     export https_proxy=http://proxy.etn.com:8080
     export http_proxy=http://proxy.etn.com:8080
@@ -84,6 +85,11 @@ steps:
     sudo cp -R $(Build.SourcesDirectory)/*  /proc/$(sudo lxc-info -n SmpBuildApplication -p -H)/root/usr/local/share/pxmc3000/source
   displayName: 'Create Diretories & Copy source to the container'
 - script: |
+    # Set proxy
+    export no_proxy=localhost, 127.0.0.1
+    export https_proxy=http://proxy.etn.com:8080
+    export http_proxy=http://proxy.etn.com:8080
+
     sudo lxc-attach -n SmpBuildApplication -- bash -c '
       # Activate command tracing
       set -o xtrace
@@ -102,6 +108,10 @@ steps:
       cp -R cmake-3.24.2-linux-x86_64/share/* /usr/share/'
   displayName: 'Install required package - apt'
 - script: |
+    # Set proxy
+    export no_proxy=localhost, 127.0.0.1
+    export https_proxy=http://proxy.etn.com:8080
+    export http_proxy=http://proxy.etn.com:8080
     sudo lxc-attach -n SmpBuildApplication -- bash -c '
       # Activate command tracing
       set -o xtrace
