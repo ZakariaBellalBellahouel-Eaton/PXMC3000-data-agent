@@ -4,8 +4,7 @@
 # https://aka.ms/yaml
 trigger:
 - master
-pool:
-  vmImage: ubuntu-latest
+pool: PXMC3000
 
 variables:
 - name: VCPKG_ROOT
