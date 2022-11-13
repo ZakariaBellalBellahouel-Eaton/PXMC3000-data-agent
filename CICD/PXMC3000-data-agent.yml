@@ -103,9 +103,9 @@ steps:
       # Install Cmake version 3.24.2 since the last version of apt is 3.18 (doesn t support preset)
       cd $(SOURCE_ROOT)
       curl -OL https://github.com/Kitware/CMake/releases/download/v3.24.3/cmake-3.24.3-linux-aarch64.tar.gz
-      tar -zxvf cmake-3.24.2-linux-x86_64.tar.gz
-      cp -R cmake-3.24.2-linux-x86_64/bin/* /usr/bin/
-      cp -R cmake-3.24.2-linux-x86_64/share/* /usr/share/'
+      tar -zxvf cmake-3.24.3-linux-aarch64.tar.gz
+      cp -R cmake-3.24.3-linux-aarch64/bin/* /usr/bin/
+      cp -R cmake-3.24.3-linux-aarch64/share/* /usr/share/'
   displayName: 'Install required package - apt'
 - script: |
     # Set proxy
