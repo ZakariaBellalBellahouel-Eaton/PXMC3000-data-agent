@@ -93,9 +93,6 @@ steps:
     sudo lxc-attach -n SmpBuildApplication -- bash -c '
       # Activate command tracing
       set -o xtrace
-      # Set system binaries to arm 
-      export VCPKG_FORCE_SYSTEM_BINARIES=arm
-
       echo installing packages with apt ...
       apt update -y
       apt upgrade -y
@@ -118,6 +115,8 @@ steps:
     sudo lxc-attach -n SmpBuildApplication -- bash -c '
       # Activate command tracing
       set -o xtrace
+      # Set system binaries to arm 
+      export VCPKG_FORCE_SYSTEM_BINARIES=arm
       cd $(PXMC_ROOT)
       # TODO : Add the copy certificate to the container and set git to use it
       git clone https://github.com/Microsoft/vcpkg
