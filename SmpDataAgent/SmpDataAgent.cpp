@@ -36,7 +36,7 @@ int main()
 	// Refresh Time
 	const int refreshTime = 2;
 	// SMP IP adress
-	const string stringSmpBasicUri = "https://10.130.129.17/";
+	const string stringSmpBasicUri = "https://10.130.129.18/";
 	// TO by encrypted in param file
 	const string username = "admin";
 	const string password = "Security.4u";
