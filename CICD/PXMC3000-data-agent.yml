@@ -4,8 +4,7 @@
 # https://aka.ms/yaml
 trigger:
 - master
-pool:
-  vmImage: ubuntu-latest
+pool: PXMC3000
 
 variables:
 - name: VCPKG_ROOT
@@ -29,6 +28,11 @@ steps:
 - script: |
     # Activate command tracing
     set -o xtrace
+    # Set proxy
+    export no_proxy=localhost, 127.0.0.1
+    export https_proxy=http://proxy.etn.com:8080
+    export http_proxy=http://proxy.etn.com:8080
+
     # Install LXC if not installed
     if [[ ! $(sudo dpkg-query -W -f='${package}\n' lxc 2>/dev/null) ]]; then
       sudo apt update
@@ -42,7 +46,7 @@ steps:
       sudo lxc-destroy SmpBuildApplication
     fi
     # Release key Issue work-arround : Download and load trusted key
-    sudo lxc-create -n SmpBuildApplication -t download -- -d debian -r bullseye -a amd64
+    sudo lxc-create -n SmpBuildApplication -t debian -- -r bullseye
     if [[ $(sudo lxc-info SmpBuildApplication -s -H) != "RUNNING" ]]; then 
       sudo lxc-start SmpBuildApplication
     fi
@@ -81,6 +85,11 @@ steps:
     sudo cp -R $(Build.SourcesDirectory)/*  /proc/$(sudo lxc-info -n SmpBuildApplication -p -H)/root/usr/local/share/pxmc3000/source
   displayName: 'Create Diretories & Copy source to the container'
 - script: |
+    # Set proxy
+    export no_proxy=localhost, 127.0.0.1
+    export https_proxy=http://proxy.etn.com:8080
+    export http_proxy=http://proxy.etn.com:8080
+
     sudo lxc-attach -n SmpBuildApplication -- bash -c '
       # Activate command tracing
       set -o xtrace
@@ -93,15 +102,21 @@ steps:
       apt install -y curl zip unzip tar build-essential pkg-config libssl-dev
       # Install Cmake version 3.24.2 since the last version of apt is 3.18 (doesn t support preset)
       cd $(SOURCE_ROOT)
-      curl -OL https://github.com/Kitware/CMake/releases/download/v3.24.2/cmake-3.24.2-linux-x86_64.tar.gz
-      tar -zxvf cmake-3.24.2-linux-x86_64.tar.gz
-      cp -R cmake-3.24.2-linux-x86_64/bin/* /usr/bin/
-      cp -R cmake-3.24.2-linux-x86_64/share/* /usr/share/'
+      curl -OL https://github.com/Kitware/CMake/releases/download/v3.24.3/cmake-3.24.3-linux-aarch64.tar.gz
+      tar -zxvf cmake-3.24.3-linux-aarch64.tar.gz
+      cp -R cmake-3.24.3-linux-aarch64/bin/* /usr/bin/
+      cp -R cmake-3.24.3-linux-aarch64/share/* /usr/share/'
   displayName: 'Install required package - apt'
 - script: |
+    # Set proxy
+    export no_proxy=localhost, 127.0.0.1
+    export https_proxy=http://proxy.etn.com:8080
+    export http_proxy=http://proxy.etn.com:8080
     sudo lxc-attach -n SmpBuildApplication -- bash -c '
       # Activate command tracing
       set -o xtrace
+      # Set system binaries to arm 
+      export VCPKG_FORCE_SYSTEM_BINARIES=arm
       cd $(PXMC_ROOT)
       # TODO : Add the copy certificate to the container and set git to use it
       git clone https://github.com/Microsoft/vcpkg
@@ -119,7 +134,7 @@ steps:
 - script: |
       # Activate command tracing
       set -o xtrace
-      sudo cp /proc/$(sudo lxc-info -n SmpBuildApplication -p -H)/root/usr/local/share/pxmc3000/SmpDataAgent/bin/linux-debug/SmpDataAgent/SmpDataAgent $(Build.ArtifactStagingDirectory)/SmpDataAgent
+      sudo cp /proc/$(sudo lxc-info -n SmpBuildApplication -p -H)/root/usr/local/share/pxmc3000/SmpDataAgent/bin/linux-debug/SmpDataAgent/SmpDataAgent $(Build.ArtifactStagingDirectory)/$(PXMC3000-data-agent-file-name)
       if [[ $(sudo lxc-info SmpBuildApplication -s -H) == "RUNNING" ]]; then 
         sudo lxc-stop SmpBuildApplication
       fi
@@ -128,6 +143,6 @@ steps:
 - task: PublishBuildArtifacts@1
   inputs:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-    ArtifactName: 'SmpDataAgent'
+    ArtifactName: '$(PXMC3000-data-agent-file-name)'
     publishLocation: 'Container'
   displayName: 'Publish Binarie'
